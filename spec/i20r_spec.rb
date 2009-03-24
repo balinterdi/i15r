@@ -41,10 +41,13 @@ describe "I20r" do
           <input type="text" id="user-name" name="user[name]" />
         EOS
 
-        @i20r.expects(:get_content_from).with(@file_path).returns(@plain_snippet)        
+        @i20r.expects(:get_content_from).with(@file_path).returns(@plain_snippet)
+        @i20r.expects(:write_content_to).with(@file_path, @i18ned_snippet).returns(true)
       end
+      
       it "should correctly replace plain texts with I18n-ed messages" do
-        @i20r.replace_non_i18_messages(@file_path).should == @i18ned_snippet
+        # @i20r.replace_non_i18_messages(@plain_snippet).should == @i18ned_snippet
+        @i20r.write_i18ned_file(@file_path)
       end
     end
 
