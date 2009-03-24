@@ -12,10 +12,6 @@ class I20r
     "#{prefix}.#{text.downcase}"
   end
   
-  def with_replaced_18n_messages(content, prefix)
-    
-  end
-  
   def get_content_from(file)
     f = open(File.expand_path(file), "r")
     content = f.read()
@@ -26,8 +22,9 @@ class I20r
   def replace_non_i18_messages(file)
     content = get_content_from(file)
     prefix = file_path_to_message_prefix(file)
-    with_replaced_18n_messages(content, prefix) do
-      
+    content.gsub(/>\s*(\w+)\s*</) do |match|
+      i18n_string = get_i18n_message_string($1, prefix)
+      %(><%= I18n.t("#{i18n_string}") %><)
     end
   end
 end
