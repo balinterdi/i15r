@@ -13,8 +13,33 @@ describe "I20r" do
     @i20r = I20r.new
   end
 
-  it "should correctly turn file paths to message prefixes" do
-    @i20r.file_path_to_message_prefix("/app/views/users/new.html.erb").should == "users.new"
+  describe "converting file paths to message prefixes" do
+    
+    it "should correctly work from app root for views" do
+      @i20r.file_path_to_message_prefix("app/views/users/new.html.erb").should == "users.new"
+    end
+
+    it "should correctly work from app root for helpers" do
+      @i20r.file_path_to_message_prefix("app/helpers/users_helper.rb").should == "users_helper"
+    end
+
+    it "should correctly work from app root for controllers" do
+      @i20r.file_path_to_message_prefix("app/controllers/users_controller.rb").should == "users_controller"
+    end
+
+    it "should correctly work from app root for models" do
+      @i20r.file_path_to_message_prefix("app/models/user.rb").should == "user"
+    end
+    
+    it "should correctly work from app root for deep dir. structures" do
+      @i20r.file_path_to_message_prefix("app/views/member/session/users/new.html.erb").should == "member.session.users.new"
+    end
+    
+    it "should raise if no app subdirectory is found on the path" do
+      path = "projects/doodle.rb"
+      File.stubs(:expand_path).returns(path)
+      lambda { @i20r.file_path_to_message_prefix(path) }.should raise_error(AppFolderNotFound)
+    end
   end
 
   describe "turning plain messages into i18n message strings" do
