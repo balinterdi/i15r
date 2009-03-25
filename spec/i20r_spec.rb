@@ -62,18 +62,32 @@ describe "I20r" do
         @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned        
       end
 
-      it "should replace several words and remove whitespace and punctuation" do
-        plain = %(<label for="user-name">Friend's name:</label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.friends_name") %></label>)
+      it "should replace several words" do
+        plain = %(<label for="user-name">Earlier names</label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
+        @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+
+      it "should remove whitespace" do
+        plain = %(<label for="user-name"> Earlier names </label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
         @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned        
+      end
+      
+      it "should remove punctuation" do
+        plain = %(<label for="user-name">Got friends? A friend's name:</label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
+        @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned                
       end
       
     end
     
-    it "should replace a title in a link_to helper" do
-      plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %></p>)
-      i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %></p>)
-      @i20r.replace_non_i18_messages(plain, "users.index").should == i18ned
+    describe "rails helper params" do
+      it "should replace a title in a link_to helper" do
+        plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %></p>)
+        i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %></p>)
+        @i20r.replace_non_i18_messages(plain, "users.index").should == i18ned
+      end
     end
     
   end
