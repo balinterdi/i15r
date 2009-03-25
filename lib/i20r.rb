@@ -38,17 +38,22 @@ class I20r
   end
 
   def replace_in_rails_helpers(text, prefix)
-    text.gsub(/<%=\s*link_to\s+['"](.*)['"]\s*/) do |match|
+    text.gsub!(/<%=\s*link_to\s+['"](.*)['"]\s*/) do |match|
       i18n_string = get_i18n_message_string($1, prefix)
       %(<%= link_to I18n.t("#{i18n_string}"))
     end
   end
-
-  def replace_non_i18_messages(text, prefix)
-    text = text.gsub(/>\s*(\w+)\s*</) do |match|
+  
+  def replace_in_tag_content(text, prefix)
+    text = text.gsub!(/>\s*(\w+)\s*</) do |match|
       i18n_string = get_i18n_message_string($1, prefix)
       %(><%= I18n.t("#{i18n_string}") %><)
-    end
+    end    
+  end
+
+  def replace_non_i18_messages(text, prefix)
+    replace_in_tag_content(text, prefix)
     replace_in_rails_helpers(text, prefix)
+    text
   end
 end
