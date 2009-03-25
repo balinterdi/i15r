@@ -55,10 +55,19 @@ describe "I20r" do
   end
   
   describe "message text replacement" do
-    it "should replace words that are content in tags" do
-      plain = %(<label for="user-name">Name</label>)
-      i18ned = %(<label for="user-name"><%= I18n.t("users.new.name") %></label>)
-      @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned        
+    describe "tag contents" do      
+      it "should replace a single word" do
+        plain = %(<label for="user-name">Name</label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.name") %></label>)
+        @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned        
+      end
+
+      it "should replace several words and remove whitespace and punctuation" do
+        plain = %(<label for="user-name">Friend's name:</label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.friends_name") %></label>)
+        @i20r.replace_non_i18_messages(plain, "users.new").should == i18ned        
+      end
+      
     end
     
     it "should replace a title in a link_to helper" do

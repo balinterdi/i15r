@@ -1,4 +1,5 @@
 require "rubygems"
+require "ruby-debug"
 
 class AppFolderNotFound < Exception; end
 
@@ -19,7 +20,8 @@ class I20r
   end
 
   def get_i18n_message_string(text, prefix)
-    "#{prefix}.#{text.gsub(/\s/, '_').downcase}"
+    text = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
+    "#{prefix}.#{text}"
   end
 
   def get_content_from(file)
@@ -50,7 +52,7 @@ class I20r
   end
   
   def replace_in_tag_content(text, prefix)
-    text = text.gsub!(/>\s*(\w+)\s*</) do |match|
+    text = text.gsub!(/>\s*(\w[\s\w:'"!\?]+)\s*</) do |match|
       i18n_string = get_i18n_message_string($1, prefix)
       %(><%= I18n.t("#{i18n_string}") %><)
     end    
