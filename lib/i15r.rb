@@ -5,7 +5,7 @@ require "ruby-debug"
 
 class AppFolderNotFound < Exception; end
 
-class I20r
+class I15r
 
   def parse_options(args)
     @options = OpenStruct.new
@@ -100,7 +100,7 @@ class I20r
 end
 
 if __FILE__ == $0
-  @i20r = I20r.new
-  @i20r.parse_options(ARGV)
-  @i20r.write_i18ned_file(ARGV)
+  @i15r = I15r.new
+  @i15r.parse_options(ARGV)
+  @i15r.write_i18ned_file(ARGV)
 end
