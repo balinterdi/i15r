@@ -1,9 +1,39 @@
 require "rubygems"
+require 'optparse'
+require "ostruct"
 require "ruby-debug"
 
 class AppFolderNotFound < Exception; end
 
 class I20r
+
+  def parse_options(args)
+    @options = OpenStruct.new
+    @options.prefix = nil
+    opts = OptionParser.new do |opts|
+      opts.on("--prefix PREFIX",
+              "apply PREFIX to generated I18n messages instead of deriving it from the path") do |prefix|
+        @options.prefix = prefix
+      end
+    end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+
+    opts.on_tail("--version", "Show version") do
+      puts "0.0.1"
+      exit
+    end
+
+    opts.parse!(args)
+    # @options
+  end
+
+  def prefix
+    @options.prefix
+  end
 
   def file_path_to_message_prefix(file)
     segments = File.expand_path(file).split('/').select { |segment| !segment.empty? }
@@ -39,7 +69,7 @@ class I20r
 
   def write_i18ned_file(file)
     text = get_content_from(file)
-    prefix = file_path_to_message_prefix(file)
+    prefix = self.prefix || file_path_to_message_prefix(file)
     i18ned_text = replace_non_i18_messages(text, prefix)
     write_content_to(file, i18ned_text)
   end
@@ -50,22 +80,27 @@ class I20r
       %(<%= link_to I18n.t("#{i18n_string}"))
     end
   end
-  
+
   def replace_in_tag_content(text, prefix)
     text = text.gsub!(/>\s*(\w[\s\w:'"!\?\.]+)\s*</) do |match|
       i18n_string = get_i18n_message_string($1, prefix)
       %(><%= I18n.t("#{i18n_string}") %><)
-    end    
+    end
   end
 
   def replace_non_i18_messages(text, prefix)
+    #TODO: that's not very nice since it relies on
+    # the replace methods (e.g replace_in_tag_content)
+    # being destructive (banged)
     replace_in_tag_content(text, prefix)
     replace_in_rails_helpers(text, prefix)
     text
   end
-  
+
 end
 
 if __FILE__ == $0
-  I20r.new.write_i18ned_file(ARGV[0])
+  @i20r = I20r.new
+  @i20r.parse_options(ARGV)
+  @i20r.write_i18ned_file(ARGV)
 end
