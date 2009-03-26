@@ -1,6 +1,6 @@
 # I15r
 
-I20r (Internationalizer) searches for all the non-i18n texts in the given files/directory and replaces them with I18n messages based on the file in which they were found and of course the text itself that was replaced. Optional arguments are also taken into account.
+I15r (Internationalizer) searches for all the non-i18n texts in the given files/directory and replaces them with I18n messages based on the file in which they were found and of course the text itself that was replaced. Optional arguments are also taken into account.
 
 E.g
 

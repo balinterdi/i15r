@@ -75,9 +75,15 @@ describe "i15r" do
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
 
-      it "should remove punctuation" do
-        plain = %(<label for="user-name">Got friends? A friend's name:</label>)
+      it "should remove punctuation from plain strings" do
+        plain = %(<label for="user-name">Got friends? A friend's name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+
+      it "should not remove punctuation outside plain strings" do
+        plain = %(<label for="user-name">A friend's name:</label>)
+        i18ned = %(<label for="user-name"><%= I18n.t("users.new.a_friends_name") %>:</label>)
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
 
