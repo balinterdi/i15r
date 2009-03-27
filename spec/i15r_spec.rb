@@ -69,12 +69,6 @@ describe "i15r" do
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
 
-      it "should remove whitespace" do
-        plain = %(<label for="user-name"> Earlier names </label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
-      end
-
       it "should remove punctuation from plain strings" do
         plain = %(<label for="user-name">Got friends? A friend's name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
@@ -84,6 +78,12 @@ describe "i15r" do
       it "should not remove punctuation outside plain strings" do
         plain = %(<label for="user-name">A friend's name:</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.a_friends_name") %>:</label>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+
+      it "should preserve whitespace in the content part of the tag" do
+        plain = %(<label for="user-name"> Name </label>)
+        i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
 

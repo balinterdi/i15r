@@ -1,11 +1,12 @@
 ### 0.1
 
-* bug: In messages ending in punctuation (e.g No tags.) the punctuation is removed when replaced (e.g <%= I18n.t("users.show.no_tags") %>)
+* OK bug: In messages ending in punctuation (e.g No tags.) the punctuation is removed when replaced (e.g <%= I18n.t("users.show.no_tags") %>)
 * think about which rails helpers could be given text that needs to be internationalized (currently only link_to is scanned)
 
 ### 0.1.1
 
-* bug: indenting whitespace is removed around replaced messages
+* OK bug: indenting whitespace is removed around replaced messages
+This is easy to fix, the whitespace has to be readded just like the punctuation
 
     <% tags = @photo.tag_list %>
       Tags:

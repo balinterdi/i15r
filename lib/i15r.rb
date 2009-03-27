@@ -82,12 +82,14 @@ class I15r
   end
 
   def replace_in_tag_content(text, prefix)
-    text = text.gsub!(/>\s*(\w[\s\w:'"!?\.]+)\s*</) do |match|
-      i18n_string = get_i18n_message_string($1, prefix)
-      # readd ending punctuation (there must be a way to put this into the regex)
-      # I just did not find it.
-      ending_punctuation = %w(? . ! :).include?($1[-1..-1]) ? $1[-1..-1] : ''
-      %(><%= I18n.t("#{i18n_string}") %>#{ending_punctuation}<)
+    text = text.gsub!(/>(\s*)(\w[\s\w:'"!?\.]+)\s*</) do |match|
+      i18n_string = get_i18n_message_string($2, prefix)
+      # readding leading ws and ending punctuation (and ws)
+      # (there must be a way to put this into the regex,
+      # I just did not find it.)
+      leading_whitespace = $1
+      ending_punctuation = $2[/([?.!:\s]*)$/, 1]
+      %(>#{leading_whitespace}<%= I18n.t("#{i18n_string}") %>#{ending_punctuation.to_s}<)
     end
   end
 
