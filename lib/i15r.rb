@@ -93,13 +93,24 @@ class I15r
     end
   end
 
+  def returning(value)
+    yield value
+    value
+  end
+
   def replace_non_i18_messages(text, prefix)
     #TODO: that's not very nice since it relies on
     # the replace methods (e.g replace_in_tag_content)
     # being destructive (banged)
-    replace_in_tag_content(text, prefix)
-    replace_in_rails_helpers(text, prefix)
-    text
+    returning(text) do |text|
+      replace_in_tag_content(text, prefix)
+      replace_in_rails_helpers(text, prefix)
+    end
+  end
+
+  def internationalize!(path)
+    files = path =~ /.erb$/ ? [path] : Dir.glob("#{path}/**/*.erb")
+    files.each { |file| write_i18ned_file(file) }
   end
 
 end
@@ -107,5 +118,5 @@ end
 if __FILE__ == $0
   @i15r = I15r.new
   @i15r.parse_options(ARGV)
-  @i15r.write_i18ned_file(ARGV[-1])
+  @i15r.internationalize!(ARGV[-1])
 end
