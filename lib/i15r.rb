@@ -82,7 +82,9 @@ class I15r
   end
 
   def replace_in_tag_content(text, prefix)
-    text = text.gsub!(/>(\s*)(\w[\s\w:'"!?\.]+)\s*</) do |match|
+    # TODO: include accented (non-iso-8859-1) word characters
+    # in the words (e.g á or é should be considered such)
+    text = text.gsub!(/>(\s*)(\w[\s\w:'"!?\.,]+)\s*</) do |match|
       i18n_string = get_i18n_message_string($2, prefix)
       # readding leading ws and ending punctuation (and ws)
       # (there must be a way to put this into the regex,
