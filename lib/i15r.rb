@@ -50,8 +50,11 @@ class I15r
   end
 
   def get_i18n_message_string(text, prefix)
-    text = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
-    "#{prefix}.#{text}"
+    key = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
+    indent = ""
+    (0..prefix.split(".").size).each { |i| indent = "  " + indent }
+    puts "#{indent}#{key}: #{text}"    
+    "#{prefix}.#{key}"
   end
 
   def get_content_from(file)
@@ -104,6 +107,14 @@ class I15r
     #TODO: that's not very nice since it relies on
     # the replace methods (e.g replace_in_tag_content)
     # being destructive (banged)
+    
+    puts "en:"
+    prefix_parts = prefix.split(".").each_with_index do |p, i|
+      p = "#{p}:"
+      (0..i).each { |i| p = "  " + p }
+      puts "#{p}"
+    end
+    
     returning(text) do |text|
       replace_in_tag_content(text, prefix)
       replace_in_rails_helpers(text, prefix)
