@@ -78,7 +78,7 @@ class I15r
   end
 
   def replace_in_rails_helpers(text, prefix)
-    text.gsub!(/<%=\s*link_to\s+['"](.*)['"]\s*/) do |match|
+    text.gsub!(/<%=\s*link_to\s+['"](.*?)['"]\s*/) do |match|
       i18n_string = get_i18n_message_string($1, prefix)
       %(<%= link_to I18n.t("#{i18n_string}"))
     end

@@ -95,6 +95,12 @@ describe "i15r" do
         i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %></p>)
         @i15r.replace_non_i18_messages(plain, "users.index").should == i18ned
       end
+
+      it "should replace a title in a link_to helper with html attributes" do
+        plain = %(<p><%= link_to "Create a new user", new_user_path, { :class => "add" } -%></p>)
+        i18ned = %(<p><%= link_to I18n.t("users.index.create_a_new_user"), new_user_path, { :class => "add" } -%></p>)
+        @i15r.replace_non_i18_messages(plain, "users.index").should == i18ned
+      end
     end
 
   end # "message text replacement"
