@@ -53,7 +53,7 @@ class I15r
     key = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
     indent = ""
     (0..prefix.split(".").size).each { |i| indent = "  " + indent }
-    puts "#{indent}#{key}: #{text}"    
+    puts "#{indent}#{key}: #{text}"
     "#{prefix}.#{key}"
   end
 
@@ -98,6 +98,13 @@ class I15r
     end
   end
 
+  def replace_in_tag_attributes(text, prefix)
+    text = text.gsub!(/(<a\s+.*title=)['"](.*?)['"]/) do |match|
+      i18n_string = get_i18n_message_string($2, prefix)
+      %(#{$1}"<%= I18n.t("#{i18n_string}") %>")
+    end
+  end
+
   def returning(value)
     yield value
     value
@@ -107,15 +114,16 @@ class I15r
     #TODO: that's not very nice since it relies on
     # the replace methods (e.g replace_in_tag_content)
     # being destructive (banged)
-    
+
     puts "en:"
     prefix_parts = prefix.split(".").each_with_index do |p, i|
       p = "#{p}:"
       (0..i).each { |i| p = "  " + p }
       puts "#{p}"
     end
-    
+
     returning(text) do |text|
+      replace_in_tag_attributes(text, prefix)
       replace_in_tag_content(text, prefix)
       replace_in_rails_helpers(text, prefix)
     end

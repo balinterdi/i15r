@@ -89,6 +89,14 @@ describe "i15r" do
 
     end
 
+    describe "tag attributes" do
+      it "should replace a link's title" do
+        plain = %(<a title="site root" href="/"><img src="site_logo.png" /></a>)
+        i18ned = %(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+    end
+
     describe "rails helper params" do
       it "should replace a title in a link_to helper" do
         plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %></p>)
