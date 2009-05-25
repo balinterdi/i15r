@@ -24,6 +24,4 @@ will be replaced by
 
     (in file app/views/member/users/edit.html.erb)
     <label for="user-name"><%= I18n.t("member.users.edit.name") %></label>
-    <input type="text" id="user-name" name="user[name]" />
-    
-Unless -y is given, the user will be prompted to confirm each substitution.
+    <input type="text" id="user-name" name="user[name]" />    

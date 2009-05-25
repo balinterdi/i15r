@@ -1,7 +1,7 @@
 require "rubygems"
 require 'optparse'
 require "ostruct"
-require "ruby-debug"
+# require "ruby-debug"
 
 class AppFolderNotFound < Exception; end
 
@@ -11,12 +11,18 @@ class I15r
     @options = OpenStruct.new
     @options.prefix = nil
     opts = OptionParser.new do |opts|
+      opts.banner = "Usage: ruby i15r.rb [options] <path_to_internationalize>"
       opts.on("--prefix PREFIX",
               "apply PREFIX to generated I18n messages instead of deriving it from the path") do |prefix|
         @options.prefix = prefix
       end
     end
-
+    
+    if args.length.zero?
+      puts opts.banner
+      exit
+    end
+    
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
