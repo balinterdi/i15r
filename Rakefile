@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rake'
 require 'echoe'
 
-Echoe.new('i15r', '0.2.1') do |p|
+Echoe.new('i15r', '0.2.1.1') do |p|
   p.description    = "The internationalizer. Replaces plain text strings in your views and replaces them with I18n message strings so you only have to provide the translations."
   p.url            = "http://github.com/balinterdi/i15r"
   p.author         = "Bálint Érdi"
