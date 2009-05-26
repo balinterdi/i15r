@@ -8,7 +8,10 @@ Spec::Runner.configure do |config|
   config.mock_with :mocha
 end
 
+$testing = true
+
 describe "i15r" do
+
   before do
     @i15r = I15r.new
   end

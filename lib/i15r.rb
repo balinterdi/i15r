@@ -59,7 +59,9 @@ class I15r
     key = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
     indent = ""
     (0..prefix.split(".").size).each { |i| indent = "  " + indent }
-    puts "#{indent}#{key}: #{text}"
+    silenced_if_testing do
+      puts "#{indent}#{key}: #{text}"
+    end
     "#{prefix}.#{key}"
   end
 
@@ -142,11 +144,15 @@ class I15r
     # the replace methods (e.g replace_in_tag_content)
     # being destructive (banged)
 
-    puts "en:"
+    silenced_if_testing do
+      puts "en:"
+    end
     prefix_parts = prefix.split(".").each_with_index do |p, i|
       p = "#{p}:"
       (0..i).each { |i| p = "  " + p }
-      puts "#{p}"
+      silenced_if_testing do
+        puts "#{p}"
+      end
     end
 
     returning(text) do |text|
@@ -161,6 +167,21 @@ class I15r
     files.each { |file| write_i18ned_file(file) }
   end
 
+  private
+  def silenced_if_testing
+    if testing?
+      orig_stdout = $stdout
+      $stdout = File.new('/dev/null', 'w')
+    end
+    yield
+    if testing?
+      $stdout = orig_stdout
+    end
+  end
+  
+  def testing?
+    $testing
+  end
 end
 
 if __FILE__ == $0
