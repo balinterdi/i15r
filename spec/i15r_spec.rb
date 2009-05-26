@@ -109,6 +109,12 @@ describe "i15r" do
         i18ned = %(<p><%= link_to I18n.t("users.index.create_a_new_user"), new_user_path, { :class => "add" } -%></p>)
         @i15r.replace_non_i18_messages(plain, "users.index").should == i18ned
       end
+
+      it "should replace the title of a label helper" do
+        plain = %(<%= f.label :name, "Name" %>)
+        i18ned = %(<%= f.label :name, I18n.t("users.new.name") %>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
     end
 
   end # "message text replacement"

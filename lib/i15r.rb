@@ -17,12 +17,12 @@ class I15r
         @options.prefix = prefix
       end
     end
-    
+
     if args.length.zero?
       puts opts.banner
       exit
     end
-    
+
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
@@ -88,6 +88,12 @@ class I15r
       i18n_string = get_i18n_message_string($1, prefix)
       %(<%= link_to I18n.t("#{i18n_string}"))
     end
+
+    text.gsub!(/<%=(.*)\.label(.*),\s*['"](.*?)['"]/) do |match|
+      i18n_string = get_i18n_message_string($3, prefix)
+      %(<%= #{$1.strip}.label #{$2.strip}, I18n.t("#{i18n_string}"))
+    end
+
   end
 
   def replace_in_tag_content(text, prefix)
