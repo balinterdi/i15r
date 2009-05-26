@@ -1,0 +1,11 @@
+bin/i15r
+CHANGELOG
+lib/i15r.rb
+lib/i15r.rbc
+MIT-LICENSE
+Rakefile
+README.markdown
+spec/i15r_spec.rb
+tasks/i15r.rake
+todos.markdown
+Manifest

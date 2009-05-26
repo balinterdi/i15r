@@ -183,9 +183,3 @@ class I15r
     $testing
   end
 end
-
-if __FILE__ == $0
-  @i15r = I15r.new
-  @i15r.parse_options(ARGV)
-  @i15r.internationalize!(ARGV[-1])
-end
