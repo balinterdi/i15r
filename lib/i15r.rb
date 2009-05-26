@@ -94,6 +94,11 @@ class I15r
       %(<%= #{$1.strip}.label #{$2.strip}, I18n.t("#{i18n_string}"))
     end
 
+    text.gsub!(/<%=\s*label_tag(.*),\s*['"](.*?)['"]/) do |match|
+      i18n_string = get_i18n_message_string($2, prefix)
+      %(<%= label_tag #{$1.strip}, I18n.t("#{i18n_string}"))
+    end
+
   end
 
   def replace_in_tag_content(text, prefix)
