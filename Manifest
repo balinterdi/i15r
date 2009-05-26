@@ -1,11 +1,12 @@
 bin/i15r
 CHANGELOG
+i15r.gemspec
+init.rb
 lib/i15r.rb
-lib/i15r.rbc
+Manifest
 MIT-LICENSE
 Rakefile
 README.markdown
 spec/i15r_spec.rb
 tasks/i15r.rake
 todos.markdown
-Manifest
