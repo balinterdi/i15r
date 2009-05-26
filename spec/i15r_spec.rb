@@ -115,13 +115,25 @@ describe "i15r" do
         i18ned = %(<%= f.label :name, I18n.t("users.new.name") %>)
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
-      
+
       it "should replace the title of a label_tag helper" do
         plain = %(<%= label_tag :name, "Name" %>)
         i18ned = %(<%= label_tag :name, I18n.t("users.new.name") %>)
         @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
       end
-      
+
+      it "should replace the title of a submit helper in a form builder" do
+        plain = %(<%= f.submit "Create user" %>)
+        i18ned = %(<%= f.submit I18n.t("users.new.create_user") %>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+
+      it "should replace the title of a submit_tag helper" do
+        plain = %(<%= submit_tag "Create user" %>)
+        i18ned = %(<%= submit_tag I18n.t("users.new.create_user") %>)
+        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+      end
+
     end
 
   end # "message text replacement"

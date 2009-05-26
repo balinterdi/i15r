@@ -19,11 +19,11 @@ This is easy to fix, the whitespace has to be readded just like the punctuation
 
 * DONE title of links have to be internationailzed, e.g: <a title="Go back" href="...">
 * list the files that are about to be changed an ask for confirmation to go ahead
-* <%= f.label :body, "Question" %>
-* <%= label_tag :body, "Question" %>
-* <%= f.submit "Submit question" %>
-* <%= submit_tag "Submit question" %>
-* think about which rails helpers could be given text that needs to be internationalized (currently only link_to is scanned)
+* DONE <%= f.label :body, "Question" %>
+* DONE <%= label_tag :body, "Question" %>
+* DONE <%= f.submit "Submit question" %>
+* DONE <%= submit_tag "Submit question" %>
+* DONE think about which rails helpers could be given text that needs to be internationalized (currently only link_to is scanned)
 * suppress printing of yaml strings (change by Alberto) when running the specs
 * DONE make it possible to run i15r on several files
 

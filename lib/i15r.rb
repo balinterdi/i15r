@@ -99,6 +99,16 @@ class I15r
       %(<%= label_tag #{$1.strip}, I18n.t("#{i18n_string}"))
     end
 
+    text.gsub!(/<%=(.*)\.submit\s*['"](.*?)['"]/) do |match|
+      i18n_string = get_i18n_message_string($2, prefix)
+      %(<%= #{$1.strip}.submit I18n.t("#{i18n_string}"))
+    end
+
+    text.gsub!(/<%=\s*submit_tag\s*['"](.*?)['"]/) do |match|
+      i18n_string = get_i18n_message_string($1, prefix)
+      %(<%= submit_tag I18n.t("#{i18n_string}"))
+    end
+
   end
 
   def replace_in_tag_content(text, prefix)
