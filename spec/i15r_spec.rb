@@ -1,12 +1,5 @@
 require File.join(File.dirname(__FILE__), "..", "lib", "i15r")
-require "mocha"
 require "spec"
-
-# use mocha for mocking instead of
-# Rspec's own mock framework
-Spec::Runner.configure do |config|
-  config.mock_with :mocha
-end
 
 $testing = true
 
@@ -40,7 +33,7 @@ describe "i15r" do
 
     it "should raise if no app subdirectory is found on the path" do
       path = "projects/doodle.rb"
-      File.stubs(:expand_path).returns(path)
+      File.stub!(:expand_path).and_return(path)
       lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(AppFolderNotFound)
     end
 
@@ -144,10 +137,10 @@ describe "i15r" do
   describe "rewriting files" do
     describe "when no prefix option was given" do
       before do
-        @i15r.stubs(:prefix).returns(nil)
+        @i15r.stub!(:prefix).and_return(nil)
         @file_path = '/app/views/users/new.html.erb'
         message_prefix = "users.new"
-        @i15r.expects(:file_path_to_message_prefix).with(@file_path).returns(message_prefix)
+        @i15r.should_receive(:file_path_to_message_prefix).with(@file_path).and_return(message_prefix)
 
         @plain_snippet = <<-EOS
           <label for="user-name">Name</label>
@@ -158,8 +151,8 @@ describe "i15r" do
           <input type="text" id="user-name" name="user[name]" />
         EOS
 
-        @i15r.expects(:get_content_from).with(@file_path).returns(@plain_snippet)
-        @i15r.expects(:write_content_to).with(@file_path, @i18ned_snippet).returns(true)
+        @i15r.should_receive(:get_content_from).with(@file_path).and_return(@plain_snippet)
+        @i15r.should_receive(:write_content_to).with(@file_path, @i18ned_snippet).and_return(true)
       end
 
       it "should correctly replace plain texts with I18n-ed messages" do
@@ -173,7 +166,7 @@ describe "i15r" do
       it "should ignore the file path and use the prefix" do
         @file_path = "app/views/users/new.html.erb"
         prefix_option = "mysite"
-        @i15r.stubs(:prefix).returns(prefix_option)
+        @i15r.stub!(:prefix).and_return(prefix_option)
 
         @plain_snippet = <<-EOS
           <label for="user-name">Name</label>
@@ -184,8 +177,8 @@ describe "i15r" do
           <input type="text" id="user-name" name="user[name]" />
         EOS
 
-        @i15r.expects(:get_content_from).with(@file_path).returns(@plain_snippet)
-        @i15r.expects(:write_content_to).with(@file_path, @i18ned_snippet).returns(true)
+        @i15r.should_receive(:get_content_from).with(@file_path).and_return(@plain_snippet)
+        @i15r.should_receive(:write_content_to).with(@file_path, @i18ned_snippet).and_return(true)
         @i15r.write_i18ned_file(@file_path)
       end
 
