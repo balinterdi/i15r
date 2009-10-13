@@ -1,6 +1,7 @@
-require File.join(File.dirname(__FILE__), "..", "lib", "i15r")
+# puts %(#{File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib", "i15r")})
+$:.unshift File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib")
 
-require "spec"
+require "i15r"
 require "fakefs"
 
 $testing = true
