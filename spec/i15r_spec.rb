@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), "..", "lib", "i15r")
+
 require "spec"
+require "fakefs"
 
 $testing = true
 
@@ -133,39 +135,68 @@ describe "i15r" do
 
   end # "message text replacement"
 
-  describe "rewriting files" do
-    describe "when no prefix option was given" do
-      it "should correctly internationalize messages using a prefix derived from the path" do
-        message_prefix = "users.new"
-        plain_snippet = <<-EOS
-          <label for="user-name">Name</label>
-          <input type="text" id="user-name" name="user[name]" />
-        EOS
-        i18ned_snippet = <<-EOS
-          <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
-          <input type="text" id="user-name" name="user[name]" />
-        EOS
-        @i15r.internationalize(plain_snippet, message_prefix).should == i18ned_snippet
+  describe "when substituting the plain contents with i18n message strings" do
+    before do
+      @i15r.options.prefix = nil
+      @file_path = "app/views/users/new.html.erb"
+      File.open(@file_path, "w") { |f| f.write("xxx") } 
+    end
+
+    describe "and in dry-run mode" do
+      before do
+        @i15r.stub!(:dry_run?).and_return(true)
       end
-    end # "when no prefix option was given"
-
-    describe "when an explicit prefix option was given" do
-      it "should correctly internationalize messages using the prefix" do
-        prefix_option = "mysite"
-        plain_snippet = <<-EOS
-          <label for="user-name">Name</label>
-          <input type="text" id="user-name" name="user[name]" />
-        EOS
-        i18ned_snippet = <<-EOS
-          <label for="user-name"><%= I18n.t("#{prefix_option}.name") %></label>
-          <input type="text" id="user-name" name="user[name]" />
-        EOS
-
-        @i15r.internationalize(plain_snippet, prefix_option).should == i18ned_snippet
+      it "should not touch any files" do
+        @i15r.should_not_receive(:write_content_to)
+        @i15r.internationalize_file(@file_path)
       end
+      it "should display the diff" do
+        @i15r.should_receive(:show_diff)
+        @i15r.internationalize_file(@file_path)
+      end
+    end
 
-    end # "when an explicit prefix option was given"
+    describe "and not in dry-run mode" do
+      before do
+        @i15r.stub!(:dry_run?).and_return(false)
+      end
+      it "should write the files" do
+        @i15r.should_receive(:write_content_to)
+        @i15r.internationalize_file(@file_path)
+      end
+    end
+  end
 
-  end # rewriting files
+  describe "when no prefix option was given" do
+    it "should correctly internationalize messages using a prefix derived from the path" do
+      message_prefix = "users.new"
+      plain_snippet = <<-EOS
+        <label for="user-name">Name</label>
+        <input type="text" id="user-name" name="user[name]" />
+      EOS
+      i18ned_snippet = <<-EOS
+        <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
+        <input type="text" id="user-name" name="user[name]" />
+      EOS
+      @i15r.internationalize(plain_snippet, message_prefix).should == i18ned_snippet
+    end
+  end # "when no prefix option was given"
+
+  describe "when an explicit prefix option was given" do
+    it "should correctly internationalize messages using the prefix" do
+      prefix_option = "mysite"
+      plain_snippet = <<-EOS
+        <label for="user-name">Name</label>
+        <input type="text" id="user-name" name="user[name]" />
+      EOS
+      i18ned_snippet = <<-EOS
+        <label for="user-name"><%= I18n.t("#{prefix_option}.name") %></label>
+        <input type="text" id="user-name" name="user[name]" />
+      EOS
+
+      @i15r.internationalize(plain_snippet, prefix_option).should == i18ned_snippet
+    end
+
+  end # "when an explicit prefix option was given"
 
 end

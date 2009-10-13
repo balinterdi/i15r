@@ -7,9 +7,14 @@ class AppFolderNotFound < Exception; end
 
 class I15r
 
-  def parse_options(args)
+  attr_reader :options
+
+  def initialize
     @options = OpenStruct.new
-    @options.prefix = nil
+    @options.prefix = nil    
+  end
+
+  def parse_options(args)
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: ruby i15r.rb [options] <path_to_internationalize>"
       opts.on("--prefix PREFIX",
@@ -69,15 +74,20 @@ class I15r
     File.read(File.expand_path(file))
   end
 
+  def show_diff
+    
+  end
+
   def write_content_to(file, content)
     open(File.expand_path(file), "w") { |f| f.write(content) }
   end
 
-  def write_i18ned_file(file)
+  def internationalize_file(file)
     text = get_content_from(file)
     prefix = self.prefix || file_path_to_message_prefix(file)
     i18ned_text = internationalize(text, prefix)
-    write_content_to(file, i18ned_text)
+    show_diff
+    write_content_to(file, i18ned_text) unless dry_run?
   end
 
   def replace_in_rails_helpers(text, prefix)
@@ -159,7 +169,7 @@ class I15r
 
   def internationalize!(path)
     files = path =~ /.erb$/ ? [path] : Dir.glob("#{path}/**/*.erb")
-    files.each { |file| write_i18ned_file(file) }
+    files.each { |file| internationalize_file(file) }
   end
 
   private
