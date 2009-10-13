@@ -81,7 +81,7 @@ class I15r
   def write_i18ned_file(file)
     text = get_content_from(file)
     prefix = self.prefix || file_path_to_message_prefix(file)
-    i18ned_text = replace_non_i18_messages(text, prefix)
+    i18ned_text = internationalize(text, prefix)
     write_content_to(file, i18ned_text)
   end
 
@@ -139,7 +139,7 @@ class I15r
     value
   end
 
-  def replace_non_i18_messages(text, prefix)
+  def internationalize(text, prefix)
     #TODO: that's not very nice since it relies on
     # the replace methods (e.g replace_in_tag_content)
     # being destructive (banged)

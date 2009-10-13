@@ -31,9 +31,8 @@ describe "i15r" do
       @i15r.file_path_to_message_prefix("app/views/member/session/users/new.html.erb").should == "member.session.users.new"
     end
 
-    it "should raise if no app subdirectory is found on the path" do
+    it "should raise if path does not contain any Rails app directories" do
       path = "projects/doodle.rb"
-      File.stub!(:expand_path).and_return(path)
       lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(AppFolderNotFound)
     end
 
@@ -56,31 +55,31 @@ describe "i15r" do
       it "should replace a single word" do
         plain = %(<label for="user-name">Name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.name") %></label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace several words" do
         plain = %(<label for="user-name">Earlier names</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should remove punctuation from plain strings" do
         plain = %(<label for="user-name">Got friends? A friend's name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should not remove punctuation outside plain strings" do
         plain = %(<label for="user-name">A friend's name:</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.a_friends_name") %>:</label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should preserve whitespace in the content part of the tag" do
         plain = %(<label for="user-name"> Name </label>)
         i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
     end
@@ -89,7 +88,7 @@ describe "i15r" do
       it "should replace a link's title" do
         plain = %(<a title="site root" href="/"><img src="site_logo.png" /></a>)
         i18ned = %(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
     end
 
@@ -97,37 +96,37 @@ describe "i15r" do
       it "should replace a title in a link_to helper" do
         plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %></p>)
         i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %></p>)
-        @i15r.replace_non_i18_messages(plain, "users.index").should == i18ned
+        @i15r.internationalize(plain, "users.index").should == i18ned
       end
 
       it "should replace a title in a link_to helper with html attributes" do
         plain = %(<p><%= link_to "Create a new user", new_user_path, { :class => "add" } -%></p>)
         i18ned = %(<p><%= link_to I18n.t("users.index.create_a_new_user"), new_user_path, { :class => "add" } -%></p>)
-        @i15r.replace_non_i18_messages(plain, "users.index").should == i18ned
+        @i15r.internationalize(plain, "users.index").should == i18ned
       end
 
       it "should replace the title of a label helper in a form builder" do
         plain = %(<%= f.label :name, "Name" %>)
         i18ned = %(<%= f.label :name, I18n.t("users.new.name") %>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a label_tag helper" do
         plain = %(<%= label_tag :name, "Name" %>)
         i18ned = %(<%= label_tag :name, I18n.t("users.new.name") %>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a submit helper in a form builder" do
         plain = %(<%= f.submit "Create user" %>)
         i18ned = %(<%= f.submit I18n.t("users.new.create_user") %>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a submit_tag helper" do
         plain = %(<%= submit_tag "Create user" %>)
         i18ned = %(<%= submit_tag I18n.t("users.new.create_user") %>)
-        @i15r.replace_non_i18_messages(plain, "users.new").should == i18ned
+        @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
     end
@@ -136,50 +135,33 @@ describe "i15r" do
 
   describe "rewriting files" do
     describe "when no prefix option was given" do
-      before do
-        @i15r.stub!(:prefix).and_return(nil)
-        @file_path = '/app/views/users/new.html.erb'
+      it "should correctly internationalize messages using a prefix derived from the path" do
         message_prefix = "users.new"
-        @i15r.should_receive(:file_path_to_message_prefix).with(@file_path).and_return(message_prefix)
-
-        @plain_snippet = <<-EOS
+        plain_snippet = <<-EOS
           <label for="user-name">Name</label>
           <input type="text" id="user-name" name="user[name]" />
         EOS
-        @i18ned_snippet = <<-EOS
+        i18ned_snippet = <<-EOS
           <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
           <input type="text" id="user-name" name="user[name]" />
         EOS
-
-        @i15r.should_receive(:get_content_from).with(@file_path).and_return(@plain_snippet)
-        @i15r.should_receive(:write_content_to).with(@file_path, @i18ned_snippet).and_return(true)
-      end
-
-      it "should correctly replace plain texts with I18n-ed messages" do
-        # @i15r.replace_non_i18_messages(@plain_snippet).should == @i18ned_snippet
-        @i15r.write_i18ned_file(@file_path)
+        @i15r.internationalize(plain_snippet, message_prefix).should == i18ned_snippet
       end
     end # "when no prefix option was given"
 
     describe "when an explicit prefix option was given" do
-
-      it "should ignore the file path and use the prefix" do
-        @file_path = "app/views/users/new.html.erb"
+      it "should correctly internationalize messages using the prefix" do
         prefix_option = "mysite"
-        @i15r.stub!(:prefix).and_return(prefix_option)
-
-        @plain_snippet = <<-EOS
+        plain_snippet = <<-EOS
           <label for="user-name">Name</label>
           <input type="text" id="user-name" name="user[name]" />
         EOS
-        @i18ned_snippet = <<-EOS
+        i18ned_snippet = <<-EOS
           <label for="user-name"><%= I18n.t("#{prefix_option}.name") %></label>
           <input type="text" id="user-name" name="user[name]" />
         EOS
 
-        @i15r.should_receive(:get_content_from).with(@file_path).and_return(@plain_snippet)
-        @i15r.should_receive(:write_content_to).with(@file_path, @i18ned_snippet).and_return(true)
-        @i15r.write_i18ned_file(@file_path)
+        @i15r.internationalize(plain_snippet, prefix_option).should == i18ned_snippet
       end
 
     end # "when an explicit prefix option was given"
