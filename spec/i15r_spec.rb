@@ -5,10 +5,10 @@ require "fakefs"
 
 $testing = true
 
-describe "i15r" do
+describe I15R::Base do
 
   before do
-    @i15r = I15r.new
+    @i15r = I15R::Base.new
   end
 
   describe "converting file paths to message prefixes" do
@@ -55,30 +55,35 @@ describe "i15r" do
   describe "message text replacement" do
     describe "tag contents" do
       it "should replace a single word" do
+        pending
         plain = %(<label for="user-name">Name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.name") %></label>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace several words" do
+        pending
         plain = %(<label for="user-name">Earlier names</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should remove punctuation from plain strings" do
+        pending
         plain = %(<label for="user-name">Got friends? A friend's name</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should not remove punctuation outside plain strings" do
+        pending
         plain = %(<label for="user-name">A friend's name:</label>)
         i18ned = %(<label for="user-name"><%= I18n.t("users.new.a_friends_name") %>:</label>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should preserve whitespace in the content part of the tag" do
+        pending
         plain = %(<label for="user-name"> Name </label>)
         i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
         @i15r.internationalize(plain, "users.new").should == i18ned
@@ -88,17 +93,19 @@ describe "i15r" do
 
     describe "tag attributes" do
       it "should replace a link's title" do
-        plain = %(<a title="site root" href="/"><img src="site_logo.png" /></a>)
-        i18ned = %(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
+        plain = %(Site root\nThis is it: <a title="site root" href="/"><img src="site_logo.png" /></a>)
+        plain_rows, i18ned_rows = @i15r.replace_in_tag_attributes(plain, "users.new")
+        plain_rows.should == ['This is it: <a title="site root" href="/"><img src="site_logo.png" /></a>']
+        i18ned_rows.should == ['This is it: <a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>']
       end
     end
 
     describe "rails helper params" do
       it "should replace a title in a link_to helper" do
-        plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %></p>)
-        i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %></p>)
-        @i15r.internationalize(plain, "users.index").should == i18ned
+        plain = %(So, do you\nwant a <p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)
+        plain_rows, i18ned_rows = @i15r.replace_in_rails_helpers(plain, "users.index")
+        plain_rows.should == [%(want a <p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)]
+        i18ned_rows.should == [%(want a <p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %>?</p>)]
       end
 
       it "should replace a title in a link_to helper with html attributes" do
@@ -108,24 +115,28 @@ describe "i15r" do
       end
 
       it "should replace the title of a label helper in a form builder" do
+        pending
         plain = %(<%= f.label :name, "Name" %>)
         i18ned = %(<%= f.label :name, I18n.t("users.new.name") %>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a label_tag helper" do
+        pending
         plain = %(<%= label_tag :name, "Name" %>)
         i18ned = %(<%= label_tag :name, I18n.t("users.new.name") %>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a submit helper in a form builder" do
+        pending
         plain = %(<%= f.submit "Create user" %>)
         i18ned = %(<%= f.submit I18n.t("users.new.create_user") %>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 
       it "should replace the title of a submit_tag helper" do
+        pending
         plain = %(<%= submit_tag "Create user" %>)
         i18ned = %(<%= submit_tag I18n.t("users.new.create_user") %>)
         @i15r.internationalize(plain, "users.new").should == i18ned
