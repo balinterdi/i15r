@@ -66,16 +66,11 @@ class I15r
   end
 
   def get_content_from(file)
-    f = open(File.expand_path(file), "r")
-    content = f.read()
-    f.close()
-    content
+    File.read(File.expand_path(file))
   end
 
-  def write_content_to(file, new_content)
-    f = open(File.expand_path(file), "w")
-    f.write(new_content)
-    f.close()
+  def write_content_to(file, content)
+    open(File.expand_path(file), "w") { |f| f.write(content) }
   end
 
   def write_i18ned_file(file)
