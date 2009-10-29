@@ -70,22 +70,8 @@ module I15R
       (path_segments + file_name_without_extensions).join('.')
     end
 
-    # def get_i18n_message_string(text, prefix)
-    #   key = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
-    #   indent = ""
-    #   (0..prefix.split(".").size).each { |i| indent = "  " + indent }
-    #   silenced_if_testing do
-    #     puts "#{indent}#{key}: #{text}"
-    #   end
-    #   "#{prefix}.#{key}"
-    # end
-
     def get_content_from(file)
       File.read(File.expand_path(file))
-    end
-
-    def show_diff
-    
     end
 
     def write_content_to(file, content)
@@ -96,33 +82,10 @@ module I15R
       text = get_content_from(file)
       prefix = self.prefix || file_path_to_message_prefix(file)
       i18ned_text = internationalize(text, prefix)
-      show_diff
       write_content_to(file, i18ned_text) unless dry_run?
     end
 
-    def replace_in_tag_content(text, prefix)
-      # TODO: include accented (non-iso-8859-1) word characters
-      # in the words (e.g á or é should be considered such)
-      text = text.gsub!(/>(\s*)(\w[\s\w:'"!?\.,]+)\s*</) do |match|
-        i18n_string = get_i18n_message_string($2, prefix)
-        # readding leading ws and ending punctuation (and ws)
-        # (there must be a way to put this into the regex,
-        # I just did not find it.)
-        leading_whitespace = $1
-        ending_punctuation = $2[/([?.!:\s]*)$/, 1]
-        %(>#{leading_whitespace}<%= I18n.t("#{i18n_string}") %>#{ending_punctuation.to_s}<)
-      end
-    end
-
-    def returning(value)
-      yield value
-      value
-    end
-
     def internationalize(text, prefix)
-      #TODO: that's not very nice since it relies on
-      # the replace methods (e.g replace_in_tag_content)
-      # being destructive (banged)
       silenced_if_testing do
         puts "en:"
       end
@@ -134,18 +97,7 @@ module I15R
         end
       end
 
-      plain_rows = []
-      i18ned_rows = []
-    
-      prs, int_rows = replace_in_tag_attributes(text, prefix)
-      plain_rows.concat(prs)
-      i18ned_rows.concat(int_rows)
-    
-      # returning(text) do |text|
-      #   replace_in_tag_attributes(text, prefix)
-      #   replace_in_tag_content(text, prefix)
-      #   replace_in_rails_helpers(text, prefix)
-      # end
+      I15R::PatternMatchers::Base.run(text, prefix)
     end
 
     def internationalize!(path)

@@ -53,47 +53,6 @@ describe I15R::Base do
 
   end
 
-  describe "message text replacement" do
-    describe "tag contents" do
-      it "should replace a single word" do
-        pending
-        plain = %(<label for="user-name">Name</label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.name") %></label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should replace several words" do
-        pending
-        plain = %(<label for="user-name">Earlier names</label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.earlier_names") %></label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should remove punctuation from plain strings" do
-        pending
-        plain = %(<label for="user-name">Got friends? A friend's name</label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.got_friends_a_friends_name") %></label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should not remove punctuation outside plain strings" do
-        pending
-        plain = %(<label for="user-name">A friend's name:</label>)
-        i18ned = %(<label for="user-name"><%= I18n.t("users.new.a_friends_name") %>:</label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should preserve whitespace in the content part of the tag" do
-        pending
-        plain = %(<label for="user-name"> Name </label>)
-        i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-    end
-
-  end # "message text replacement"
-
   describe "when substituting the plain contents with i18n message strings" do
     before do
       @i15r.options.prefix = nil
@@ -110,6 +69,7 @@ describe I15R::Base do
         @i15r.internationalize_file(@file_path)
       end
       it "should display the diff" do
+        pending
         @i15r.should_receive(:show_diff)
         @i15r.internationalize_file(@file_path)
       end
