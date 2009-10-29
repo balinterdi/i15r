@@ -100,38 +100,6 @@ module I15R
       write_content_to(file, i18ned_text) unless dry_run?
     end
 
-    def replace_in_rails_helpers(text, prefix)
-      plain = []
-      i18ned = []
-    
-      text.gsub(/^(.*)<%=\s*link_to\s+['"](.*?)['"](.*)$/) do |match|
-        i18n_string = get_i18n_message_string($2, prefix)
-        i18ned_row = %(#{$1}<%= link_to I18n.t("#{i18n_string}")#{$3})
-        plain << match ; i18ned << i18ned_row
-      end
-      [plain, i18ned]
-      # text.gsub!(/<%=(.*)\.label(.*),\s*['"](.*?)['"]/) do |match|
-      #   i18n_string = get_i18n_message_string($3, prefix)
-      #   %(<%= #{$1.strip}.label #{$2.strip}, I18n.t("#{i18n_string}"))
-      # end
-      # 
-      # text.gsub!(/<%=\s*label_tag(.*),\s*['"](.*?)['"]/) do |match|
-      #   i18n_string = get_i18n_message_string($2, prefix)
-      #   %(<%= label_tag #{$1.strip}, I18n.t("#{i18n_string}"))
-      # end
-      # 
-      # text.gsub!(/<%=(.*)\.submit\s*['"](.*?)['"]/) do |match|
-      #   i18n_string = get_i18n_message_string($2, prefix)
-      #   %(<%= #{$1.strip}.submit I18n.t("#{i18n_string}"))
-      # end
-      # 
-      # text.gsub!(/<%=\s*submit_tag\s*['"](.*?)['"]/) do |match|
-      #   i18n_string = get_i18n_message_string($1, prefix)
-      #   %(<%= submit_tag I18n.t("#{i18n_string}"))
-      # end
-
-    end
-
     def replace_in_tag_content(text, prefix)
       # TODO: include accented (non-iso-8859-1) word characters
       # in the words (e.g á or é should be considered such)

@@ -44,11 +44,11 @@ describe I15R::Base do
   describe "turning plain messages into i18n message strings" do
 
     it "should downcase a single word" do
-      @i15r.get_i18n_message_string("Name", "users.new").should == "users.new.name"
+      I15R::Base.get_i18n_message_string("Name", "users.new").should == "users.new.name"
     end
 
     it "should replace spaces with underscores" do
-      @i15r.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
+      I15R::Base.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
 
   end
@@ -87,59 +87,6 @@ describe I15R::Base do
         pending
         plain = %(<label for="user-name"> Name </label>)
         i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-    end
-
-    describe "tag attributes" do
-      it "should replace a link's title" do
-        plain = %(Site root\nThis is it: <a title="site root" href="/"><img src="site_logo.png" /></a>)
-        plain_rows, i18ned_rows = @i15r.replace_in_tag_attributes(plain, "users.new")
-        plain_rows.should == ['This is it: <a title="site root" href="/"><img src="site_logo.png" /></a>']
-        i18ned_rows.should == ['This is it: <a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>']
-      end
-    end
-
-    describe "rails helper params" do
-      it "should replace a title in a link_to helper" do
-        plain = %(So, do you\nwant a <p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)
-        plain_rows, i18ned_rows = @i15r.replace_in_rails_helpers(plain, "users.index")
-        plain_rows.should == [%(want a <p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)]
-        i18ned_rows.should == [%(want a <p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %>?</p>)]
-      end
-
-      it "should replace a title in a link_to helper with html attributes" do
-        plain = %(<p><%= link_to "Create a new user", new_user_path, { :class => "add" } -%></p>)
-        i18ned = %(<p><%= link_to I18n.t("users.index.create_a_new_user"), new_user_path, { :class => "add" } -%></p>)
-        @i15r.internationalize(plain, "users.index").should == i18ned
-      end
-
-      it "should replace the title of a label helper in a form builder" do
-        pending
-        plain = %(<%= f.label :name, "Name" %>)
-        i18ned = %(<%= f.label :name, I18n.t("users.new.name") %>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should replace the title of a label_tag helper" do
-        pending
-        plain = %(<%= label_tag :name, "Name" %>)
-        i18ned = %(<%= label_tag :name, I18n.t("users.new.name") %>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should replace the title of a submit helper in a form builder" do
-        pending
-        plain = %(<%= f.submit "Create user" %>)
-        i18ned = %(<%= f.submit I18n.t("users.new.create_user") %>)
-        @i15r.internationalize(plain, "users.new").should == i18ned
-      end
-
-      it "should replace the title of a submit_tag helper" do
-        pending
-        plain = %(<%= submit_tag "Create user" %>)
-        i18ned = %(<%= submit_tag I18n.t("users.new.create_user") %>)
         @i15r.internationalize(plain, "users.new").should == i18ned
       end
 

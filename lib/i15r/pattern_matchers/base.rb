@@ -12,7 +12,7 @@ module I15R
         @@matchers.push(block)
       end
 
-      def self.sub(text, prefix)
+      def self.run(text, prefix)
         i18ned_text = text
         @@matchers.each do |matcher|
           m = matcher.call(text, prefix)
