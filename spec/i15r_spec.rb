@@ -57,7 +57,7 @@ describe I15R::Base do
     before do
       @i15r.options.prefix = nil
       @file_path = "app/views/users/new.html.erb"
-      File.open(@file_path, "w") { |f| f.write("xxx") } 
+      File.open(@file_path, "w") { |f| f.write("<label for=\"user-name\">Name</label>") }
     end
 
     describe "and in dry-run mode" do
@@ -69,7 +69,6 @@ describe I15R::Base do
         @i15r.internationalize_file(@file_path)
       end
       it "should display the diff" do
-        pending
         @i15r.should_receive(:show_diff)
         @i15r.internationalize_file(@file_path)
       end
@@ -97,7 +96,7 @@ describe I15R::Base do
         <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
         <input type="text" id="user-name" name="user[name]" />
       EOS
-      @i15r.internationalize(plain_snippet, message_prefix).should == i18ned_snippet
+      @i15r.sub_plain_strings(plain_snippet, message_prefix).should == i18ned_snippet
     end
   end # "when no prefix option was given"
 
@@ -113,7 +112,7 @@ describe I15R::Base do
         <input type="text" id="user-name" name="user[name]" />
       EOS
 
-      @i15r.internationalize(plain_snippet, prefix_option).should == i18ned_snippet
+      @i15r.sub_plain_strings(plain_snippet, prefix_option).should == i18ned_snippet
     end
 
   end # "when an explicit prefix option was given"
