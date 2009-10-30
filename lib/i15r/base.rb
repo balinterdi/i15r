@@ -22,6 +22,7 @@ module I15R
     def initialize
       @options = OpenStruct.new
       @options.prefix = nil
+      @options
     end
 
     def parse_options(args)
@@ -36,6 +37,10 @@ module I15R
       if args.length.zero?
         puts opts.banner
         exit
+      end
+
+      opts.on_tail("-p", "--pretend", "Do not write the files, just show what would be replaced") do
+        @options.dry_run = true
       end
 
       opts.on_tail("-h", "--help", "Show this message") do
@@ -54,6 +59,10 @@ module I15R
 
     def prefix
       @options.prefix
+    end
+
+    def dry_run?
+      !!@options.dry_run
     end
 
     def file_path_to_message_prefix(file)

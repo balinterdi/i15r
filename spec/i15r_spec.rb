@@ -38,7 +38,17 @@ describe I15R::Base do
       path = "projects/doodle.rb"
       lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(AppFolderNotFound)
     end
+  end
 
+  describe "dry_run?" do
+    it "should return true when in dry run mode" do
+      @i15r.options.dry_run = true
+      @i15r.dry_run?.should == true
+    end
+    it "should return false when not in dry run mode" do
+      @i15r.options.dry_run = false
+      @i15r.dry_run?.should == false
+    end
   end
 
   describe "turning plain messages into i18n message strings" do

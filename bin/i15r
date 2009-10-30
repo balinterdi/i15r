@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 
 require 'i15r'
 
-@i15r = I15r.new
+@i15r = I15R::Base.new
 @i15r.instance_eval do
   parse_options(ARGV)
   internationalize!(ARGV[-1])  
