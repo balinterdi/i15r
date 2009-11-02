@@ -1,14 +1,20 @@
-require 'rubygems'
 require 'rake'
-require 'echoe'
 
-Echoe.new('i15r', '0.2.1.1') do |p|
-  p.description    = "The internationalizer. Replaces plain text strings in your views and replaces them with I18n message strings so you only have to provide the translations."
-  p.url            = "http://github.com/balinterdi/i15r"
-  p.author         = "Bálint Érdi"
-  p.email          = "balint.erdi@gmail.com"
-  p.ignore_pattern = ["tmp/*", "script/*"]
-  p.development_dependencies = []
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "i15r"
+    gemspec.summary = "The internationalizer. Makes your Ruby app international"
+    gemspec.description = <<-EOF
+      The internationalizer. Replaces plain text strings in your views and replaces them with I18n message strings so you only have to provide the translations.
+    EOF
+    gemspec.email = "balint.erdi@gmail.com"
+    gemspec.homepage = "http://github.com/balinterdi/i15r"
+    gemspec.authors = ["Balint Erdi"]
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
 
 Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].sort.each { |ext| load ext }

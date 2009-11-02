@@ -1,7 +1,5 @@
-require "rubygems"
-require 'optparse'
+require "optparse"
 require "ostruct"
-# require "ruby-debug"
 
 class AppFolderNotFound < Exception; end
 
