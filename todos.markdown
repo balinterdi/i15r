@@ -26,9 +26,15 @@ This is easy to fix, the whitespace has to be readded just like the punctuation
 * DONE suppress printing of yaml strings (change by Alberto) when running the specs
 * DONE make it possible to run i15r on several files
 
+### 0.3.0
+
+* DONE dry-run option: only show the diffs but do not actually overwrite the files
+
 ### 0.?
 
-* dry-run option: only show the diffs but do not actually overwrite the files
+* haml matchers
+* sort out the ugly hierarchy, make it consistent (e.g add "erb" directory as there is a haml one), do not require files in lib by full path (e.g instead of require 'i15r/pattern\_matchers\_/haml/rails\_helper_matcher' => require 'haml/rails\_helper_matcher'), etc.
+* make the haml matchers nicer (was thrown together very hastily for a client project)
 * make prefix not replace the inferred message string prefix, but really act as a prefix. (e.g if anetcom is given as a prefix, and the inferred message string is 'users.new' it should not be 'anetcom.name', but 'anetcom.users.new.name')
 * handle non-ascii characters properly (UTF-8 support) when replacing them. Mañana should become I18n.t("prefix.manana"), for instance. That is, regular expressions should be utf-8 aware.
 * write the necessary i18n strings back into the yaml file
