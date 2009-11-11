@@ -120,7 +120,7 @@ module I15R
     end
 
     def internationalize!(path)
-      files = path =~ /.erb$/ ? [path] : Dir.glob("#{path}/**/*.erb")
+      files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
       files.each { |file| internationalize_file(file) }
     end
 
