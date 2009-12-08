@@ -25,4 +25,16 @@ describe I15R::PatternMatchers::Haml::RailsHelperMatcher do
     I15R::PatternMatchers::Haml::RailsHelperMatcher.run(plain, "users.new").should == i18ned
   end
 
+  it "should replace a title in a link_to helper that uses parens in an implicit div row" do
+    plain = %q(= "I accept the #{link_to('terms and conditions', terms_and_conditions_path)}")
+    i15d = %q(= I18n.t("users.new.i_accept_the", :link => link_to(I18n.t("users.new.terms_and_conditions"), terms_and_conditions_path)))
+    I15R::PatternMatchers::Haml::RailsHelperMatcher.run(plain, "users.new").should == i15d
+  end
+
+  it "should replace a title in a link_to helper that does not use parens in an implicit div row" do
+    plain = %q(= "I accept the #{link_to 'terms and conditions', terms_and_conditions_path}")
+    i15d = %q(= I18n.t("users.new.i_accept_the", :link => link_to(I18n.t("users.new.terms_and_conditions"), terms_and_conditions_path)))
+    I15R::PatternMatchers::Haml::RailsHelperMatcher.run(plain, "users.new").should == i15d
+  end
+
 end
