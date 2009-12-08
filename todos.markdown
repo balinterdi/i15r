@@ -33,6 +33,7 @@ This is easy to fix, the whitespace has to be readded just like the punctuation
 ### 0.?
 
 * haml matchers
+  * nothing is replaced in haml files although specs pass. Probably something related to receiving the whole file content as one blob of text and not as lines. It works with erb, though.
 * sort out the ugly hierarchy, make it consistent (e.g add "erb" directory as there is a haml one), do not require files in lib by full path (e.g instead of require 'i15r/pattern\_matchers\_/haml/rails\_helper_matcher' => require 'haml/rails\_helper_matcher'), etc.
 * make the haml matchers nicer (was thrown together very hastily for a client project)
 * make prefix not replace the inferred message string prefix, but really act as a prefix. (e.g if anetcom is given as a prefix, and the inferred message string is 'users.new' it should not be 'anetcom.name', but 'anetcom.users.new.name')
