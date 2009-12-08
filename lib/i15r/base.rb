@@ -113,10 +113,10 @@ module I15R
     end
 
     def sub_plain_strings(text, prefix)
-      #TODO: find out how to display diff rows
-      I15R::PatternMatchers::Base.run(text, prefix) do |plain_row, i9l_row|
+      i15d = I15R::PatternMatchers::Base.run(text, prefix) do |plain_row, i9l_row|
         show_diff(plain_row, i9l_row)
       end
+      i15d + "\n"
     end
 
     def internationalize!(path)

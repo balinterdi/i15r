@@ -13,16 +13,20 @@ module I15R
       end
 
       def self.run(text, prefix)
-        i18ned_text = text
-        @@matchers.each do |matcher|
-          m = matcher.call(text, prefix)
-          unless m.nil?
-            plain_row, i18ned_row = m
-            yield plain_row, i18ned_row if block_given?
-            i18ned_text.gsub!(plain_row, i18ned_row)
+        lines = text.split("\n")
+        i18ned_lines = lines.map do |line|
+          @@matchers.inject(line) do |i18ned_line, matcher|
+            m = matcher.call(i18ned_line, prefix)
+            unless m.nil?
+              row_before_match, row_after_match = m
+              yield row_before_match, row_after_match if block_given?
+              row_after_match
+            else
+              i18ned_line
+            end
           end
         end
-        i18ned_text
+        i18ned_lines.join("\n")
       end
       
       #TODO: use method_added to add to matchers so that

@@ -1,0 +1,37 @@
+- @page_title = "Register"
+#main
+  = render :partial => "layouts/short_terms_and_conditions"
+  #form
+    = render :partial => "layouts/flash", :locals => { :flash => flash }
+    = my_error_messages_for :user
+    #form_head Register
+    #form_body
+      - form_for @user do |f|
+        = f.hidden_field :invitation_id
+        .field
+          = f.label :email, "Email"
+          = f.text_field :email
+        .field
+          = f.label :password, "Password"
+          = f.password_field :password
+        .field
+          = f.label :password_confirmation, "Re-enter your password"
+          = f.password_field :password_confirmation
+        %div{ :class => "field option", :style => "float:left" }
+          %label{ :for => "user_wants_newsletter" }
+            = f.check_box :wants_newsletter, :class => "checkbox"
+            Subscribe to the Quaestorial newsletter
+        %div{ :class => "field option", :style => "float:left" }
+          %label{ :for => "user_accept_t_and_c" }
+            = f.check_box :accept_t_and_c, :class => "checkbox"
+            == I accept the #{link_to('terms and conditions', terms_and_conditions_path)}
+        %button{ :type => "submit" }
+          Register
+      .clear
+    #form_bottom
+      = "Already a user? Log in #{link_to('here', login_path)}"
+  #info
+    If you are looking for our valuations services
+    %br/
+    please visit
+    = link_to "www.quaestorial-valuations.com", "http://www.quaestorial-valuations.com", :target => "_blank"
