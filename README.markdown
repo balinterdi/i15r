@@ -2,7 +2,7 @@
 
 ## Summary
 
-I15r (Internationalizer) searches for all the non-i18n texts in erb views in the given files/directory and replaces them with I18n messages. The message string is based on the file in which the text was found and the text itself that was replaced. The script overwrites the file with the new content so to be on the safe side I advise to use a source code management (SCM) tool, like git.
+I15r (Internationalizer) searches for all the non-i18n texts in erb views in the given files/directory and replaces them with I18n messages. The message string is based on the file in which the text was found and the text itself that was replaced. 
 
 E.g
 
@@ -30,20 +30,26 @@ will be replaced by
 
 ## Installation
 
-    gem install balinterdi-i15r --source http://gems.github.com
+    gem install i15r --source http://gemcutter.org
     
 ## Usage
 
-To convert a file, all you need to do is
+### Convert a single file
 
     i15r path/leading/to/view
 
-Or
+### Convert all files in a directory (deep search)
 
     i15r path/leading/to/directory
     
-In this latter case, all files with an erb suffix will be converted.
+All files with an erb suffix will be converted.
+
+### Dry run
+
+By default, i15r overwrites all the source files with the i18n message strings it generates. If you first want to see what would be replaced, you should do:
+
+    i15r app/views/users -p
 
 ## Licensing, contribution
 
-The source code of this gem can be found at [http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is released under the MIT-LICENSE, so you can basically do anything with it. However, if you think your modifications only make the tool better, and feel like it, please send a pull request or patch and I will probably merge in your changes. Any suggestions or feedback are welcome to <balint@bucionrails.com>.
+The source code of this gem can be found at [http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is released under the MIT-LICENSE, so you can basically do anything with it. However, if you think your modifications only make the tool better, please send a pull request or patch and I will consider merging in your changes. Any suggestions or feedback are welcome to <balint@bucionrails.com>.
