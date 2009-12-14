@@ -1,0 +1,31 @@
+<h1>New flight</h1>
+
+<% form_for(@flight) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :capacity %><br />
+    <%= f.text_field :capacity %>
+  </p>
+  <p>
+    <%= f.label :duration %><br />
+    <%= f.text_field :duration %>
+  </p>
+  <p>
+    <%= f.label :from_id, "From" %><br />
+    <%= f.select :from_id,  @airport_options %>
+  </p>
+  <p>
+    <%= f.label :to_id, "To" %><br />
+    <%= f.select :to_id, @airport_options %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', flights_path %>
