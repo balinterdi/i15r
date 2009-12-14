@@ -89,6 +89,7 @@ module I15R
       silenced_if_testing do
         $stdout.puts "- #{plain_row}"
         $stdout.puts "+ #{i9l_row}"
+        $stdout.puts
       end
     end
 

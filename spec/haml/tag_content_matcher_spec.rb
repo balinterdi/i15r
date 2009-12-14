@@ -14,12 +14,13 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
   end
 
   it "should replace a tag's content which is simple text all by itself on a line" do
-    #FIXME: the matcher to that matches too much and I don't currently see
-    # a way to get around it
     plain = %(please visit)
-    i18ned = %(I18n.t("users.new.please_visit"))
+    i18ned = %(= I18n.t("users.new.please_visit"))
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
   end
-  
-  
+
+  it "should not replace an implict div with an assigned class" do
+    plain = %(        .field)
+    I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == plain
+  end
 end

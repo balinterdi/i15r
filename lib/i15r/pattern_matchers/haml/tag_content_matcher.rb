@@ -34,12 +34,11 @@ module I15R
         register_matcher :match_haml_explicit_tag_content
 
         def self.match_haml_tag_content_just_text_on_line
-          #FIXME: that messes up multine ERB template texts
-          patt = /^([\w\s\d\!\-\.\?]+)$/
+          patt = /^(\s*)([^.#\s][\w\s\d\!\-\.\?]+)$/
           matches(:haml) do |text, prefix|
             if m = patt.match(text)
-              i18n_string = I15R::Base.get_i18n_message_string(m[1], prefix)
-              i18ned_row = %(I18n.t("#{i18n_string}"))
+              i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)
+              i18ned_row = %(#{m[1]}= I18n.t("#{i18n_string}"))
               [m[0], i18ned_row]
             end
           end
