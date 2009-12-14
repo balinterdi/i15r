@@ -7,15 +7,16 @@ module I15R
       #   end
       # end
 
-      def self.matches(&block)
-        @@matchers ||= []
-        @@matchers.push(block)
+      def self.matches(file_type, &block)
+        @@matchers ||= {}
+        @@matchers[file_type] ||= []
+        @@matchers[file_type].push(block)
       end
 
-      def self.run(text, prefix)
+      def self.run(text, prefix, file_type)
         lines = text.split("\n")
         i18ned_lines = lines.map do |line|
-          @@matchers.inject(line) do |i18ned_line, matcher|
+          @@matchers[file_type].inject(line) do |i18ned_line, matcher|
             m = matcher.call(i18ned_line, prefix)
             unless m.nil?
               row_before_match, row_after_match = m

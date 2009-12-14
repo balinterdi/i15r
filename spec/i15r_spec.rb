@@ -52,7 +52,6 @@ describe I15R::Base do
   end
 
   describe "turning plain messages into i18n message strings" do
-
     it "should downcase a single word" do
       I15R::Base.get_i18n_message_string("Name", "users.new").should == "users.new.name"
     end
@@ -60,9 +59,8 @@ describe I15R::Base do
     it "should replace spaces with underscores" do
       I15R::Base.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
-
   end
-
+  
   describe "when substituting the plain contents with i18n message strings" do
     before do
       @i15r.options.prefix = nil
@@ -106,7 +104,7 @@ describe I15R::Base do
         <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
         <input type="text" id="user-name" name="user[name]" />
       EOS
-      @i15r.sub_plain_strings(plain_snippet, message_prefix).should == i18ned_snippet
+      @i15r.sub_plain_strings(plain_snippet, message_prefix, :erb).should == i18ned_snippet
     end
   end # "when no prefix option was given"
 
@@ -122,9 +120,22 @@ describe I15R::Base do
         <input type="text" id="user-name" name="user[name]" />
       EOS
 
-      @i15r.sub_plain_strings(plain_snippet, prefix_option).should == i18ned_snippet
+      @i15r.sub_plain_strings(plain_snippet, prefix_option, :erb).should == i18ned_snippet
     end
-
   end # "when an explicit prefix option was given"
+
+  describe "when running the internationalization for an ERB file" do
+    before do
+      #TODO: this is not necessary once fakefs correctly fakes open, I think
+      @i15r.stub!(:write_content_to).and_return(true)
+      @file_path = "app/views/users/new.html.erb"
+      File.open(@file_path, "w") { |f| f.write("<label for=\"user-name\">Name</label>") }
+    end
+    
+    it "should only run ERB matchers" do
+      @i15r.should_receive(:sub_plain_strings).with(anything, anything, :erb)
+      @i15r.internationalize_file(@file_path)
+    end
+  end
 
 end

@@ -81,8 +81,8 @@ module I15R
       File.read(File.expand_path(file))
     end
 
-    def write_content_to(file, content)
-      open(File.expand_path(file), "w") { |f| f.write(content) }
+    def write_content_to(path, content)
+      open(File.expand_path(path), "w") { |f| f.write(content) }
     end
 
     def show_diff(plain_row, i9l_row)
@@ -92,11 +92,12 @@ module I15R
       end
     end
 
-    def internationalize_file(file)
-      text = get_content_from(file)
-      prefix = self.prefix || file_path_to_message_prefix(file)
-      i18ned_text = sub_plain_strings(text, prefix)
-      write_content_to(file, i18ned_text) unless dry_run?
+    def internationalize_file(path)
+      text = get_content_from(path)
+      prefix = self.prefix || file_path_to_message_prefix(path)
+      template_type = path[/(?:.*)\.(.*)$/, 1]
+      i18ned_text = sub_plain_strings(text, prefix, template_type.to_sym)
+      write_content_to(path, i18ned_text) unless dry_run?
     end
 
     def display_indented_header(prefix)
@@ -112,8 +113,8 @@ module I15R
       end
     end
 
-    def sub_plain_strings(text, prefix)
-      i15d = I15R::PatternMatchers::Base.run(text, prefix) do |plain_row, i9l_row|
+    def sub_plain_strings(text, prefix, file_type)
+      i15d = I15R::PatternMatchers::Base.run(text, prefix, file_type) do |plain_row, i9l_row|
         show_diff(plain_row, i9l_row)
       end
       i15d + "\n"
