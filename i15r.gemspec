@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{i15r}
-  s.version = "0.3.0"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Balint Erdi"]
-  s.date = %q{2009-12-08}
+  s.date = %q{2009-12-14}
   s.default_executable = %q{i15r}
   s.description = %q{      The internationalizer. Replaces plain text strings in your views and replaces them with I18n message strings so you only have to provide the translations.
 }
@@ -33,15 +33,24 @@ Gem::Specification.new do |s|
      "lib/i15r/base.rb",
      "lib/i15r/pattern_matcher.rb",
      "lib/i15r/pattern_matchers/base.rb",
-     "lib/i15r/pattern_matchers/rails_helper_matcher.rb",
-     "lib/i15r/pattern_matchers/tag_attribute_matcher.rb",
-     "lib/i15r/pattern_matchers/tag_content_matcher.rb",
+     "lib/i15r/pattern_matchers/erb.rb",
+     "lib/i15r/pattern_matchers/erb/rails_helper_matcher.rb",
+     "lib/i15r/pattern_matchers/erb/tag_attribute_matcher.rb",
+     "lib/i15r/pattern_matchers/erb/tag_content_matcher.rb",
+     "lib/i15r/pattern_matchers/haml.rb",
+     "lib/i15r/pattern_matchers/haml/rails_helper_matcher.rb",
+     "lib/i15r/pattern_matchers/haml/tag_content_matcher.rb",
+     "spec/erb/rails_helper_matcher_spec.rb",
+     "spec/erb/tag_attribute_matcher_spec.rb",
+     "spec/erb/tag_content_matcher_spec.rb",
+     "spec/haml/rails_helper_matcher_spec.rb",
+     "spec/haml/tag_content_matcher_spec.rb",
      "spec/i15r_spec.rb",
      "spec/pattern_matcher_spec.rb",
-     "spec/rails_helper_matcher_spec.rb",
      "spec/spec.opts",
-     "spec/tag_attribute_matcher_spec.rb",
-     "spec/tag_content_matcher_spec.rb",
+     "spec/spec_helper.rb",
+     "spec/support/new_flight.html.erb",
+     "spec/support/new_user.html.haml",
      "tasks/i15r.rake",
      "todos.markdown"
   ]
@@ -51,11 +60,14 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{The internationalizer. Makes your Ruby app international}
   s.test_files = [
-    "spec/i15r_spec.rb",
+    "spec/erb/rails_helper_matcher_spec.rb",
+     "spec/erb/tag_attribute_matcher_spec.rb",
+     "spec/erb/tag_content_matcher_spec.rb",
+     "spec/haml/rails_helper_matcher_spec.rb",
+     "spec/haml/tag_content_matcher_spec.rb",
+     "spec/i15r_spec.rb",
      "spec/pattern_matcher_spec.rb",
-     "spec/rails_helper_matcher_spec.rb",
-     "spec/tag_attribute_matcher_spec.rb",
-     "spec/tag_content_matcher_spec.rb"
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
