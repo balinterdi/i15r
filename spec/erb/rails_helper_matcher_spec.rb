@@ -5,8 +5,8 @@ require "spec"
 # tests are not independent: they are coupled through the Base's run method
 describe I15R::PatternMatchers::Erb::RailsHelperMatcher do
   it "should replace a title in a link_to helper" do
-    plain = %(want a <p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)
-    i18ned = %(want a <p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %>?</p>)
+    plain = %(<p class="highlighted"><%= link_to 'New user', new_user_path %>?</p>)
+    i18ned = %(<p class="highlighted"><%= link_to I18n.t("users.index.new_user"), new_user_path %>?</p>)
     I15R::PatternMatchers::Erb::RailsHelperMatcher.run(plain, "users.index").should == i18ned
   end
 

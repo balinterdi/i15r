@@ -16,7 +16,6 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
   it "should replace a tag's content which is simple text all by itself on a line" do
     #FIXME: the matcher to that matches too much and I don't currently see
     # a way to get around it
-    pending
     plain = %(please visit)
     i18ned = %(I18n.t("users.new.please_visit"))
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned

@@ -39,7 +39,7 @@ module I15R
             end
           end
         end
-        # register_matcher :match_haml_tag_content_just_text_on_line
+        register_matcher :match_haml_tag_content_just_text_on_line
 
       end
 

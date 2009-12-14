@@ -4,18 +4,31 @@ module I15R
   module PatternMatchers
     module Erb
       class TagContentMatcher < Base
-        def self.match_tag_content
+        def self.match_tag_content_on_one_line
           patt = /^(.*)>(\s*)(\w[\s\w:'"!?\.,]+)\s*<\/(.*)$/
           matches do |text, prefix|
             if m = patt.match(text)
               i18n_string = I15R::Base.get_i18n_message_string(m[3], prefix)
               ending_punctuation = m[3][/([?.!:\s]*)$/, 1]
-              i18ned_row = %(#{m[1]}>#{m[2]}<%= I18n.t("#{i18n_string}") %>#{ending_punctuation.to_s}</#{m[4]})
-              [m[0], i18ned_row]
+              i15d_row = %(#{m[1]}>#{m[2]}<%= I18n.t("#{i18n_string}") %>#{ending_punctuation.to_s}</#{m[4]})
+              [m[0], i15d_row]
             end
           end
         end
-        register_matcher :match_tag_content
+        register_matcher :match_tag_content_on_one_line
+
+        def self.match_tag_content_multiline
+          patt = /^(\s*)(\w[\w\s,]*)(.*)$/
+          matches do |text, prefix|
+            if m = patt.match(text)
+              i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)
+              i15d_row = %(#{m[1]}<%= I18n.t("#{i18n_string}") %>#{m[3]})
+              [m[0], i15d_row]
+            end
+          end
+        end
+        register_matcher :match_tag_content_multiline
+
       end
     end
   end

@@ -5,8 +5,8 @@ require "spec"
 # in the tests. That's not elegant and tests are not independent: they are coupled through the Base's run method
 describe I15R::PatternMatchers::Erb::TagAttributeMatcher do
   it "should replace a link's title" do
-    plain = %(Site root\nThis is it: <a title="site root" href="/"><img src="site_logo.png" /></a>)
-    i18ned = %(Site root\nThis is it: <a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)
+    plain = %(<a title="site root" href="/"><img src="site_logo.png" /></a>)
+    i18ned = %(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)
     I15R::PatternMatchers::Erb::TagAttributeMatcher.run(plain, "users.new").should == i18ned
   end
 
