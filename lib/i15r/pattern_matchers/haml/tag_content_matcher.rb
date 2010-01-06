@@ -34,7 +34,7 @@ module I15R
         register_matcher :match_haml_explicit_tag_content
 
         def self.match_haml_tag_content_just_text_on_line
-          patt = /^(\s*)([^.#\s][\w\s\d\!\-\.\?]+)$/
+          patt = /^(\s*)([^.#\s][[:alpha:][:upper:]\s\d\!\-\.\?]+)$/
           matches(:haml) do |text, prefix|
             if m = patt.match(text)
               i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)

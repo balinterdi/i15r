@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 
 describe I15R::PatternMatchers::Haml::TagContentMatcher do
@@ -22,5 +24,25 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
   it "should not replace an implict div with an assigned class" do
     plain = %(        .field)
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == plain
+  end
+  
+  describe "when text has non-english characters" do
+    it "should replace a tag's content where the tag is an implicit div" do
+      plain = %(#form_head Türkçe)
+      i18ned = %(#form_head= I18n.t("users.edit.türkçe"))
+      I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.edit").should == i18ned
+    end
+
+    it "should replace a tag's content where the tag is an explicit one" do
+      plain = %(%p Egy, kettő, három, négy, öt.)
+      i18ned = %(%p I18n.t("users.show.egy_kettő_három_négy_öt"))
+      I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.show").should == i18ned
+    end
+
+    it "should replace a tag's content which is simple text all by itself on a line" do
+      plain = %(Türkçe)
+      i18ned = %(= I18n.t("users.new.türkçe"))
+      I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
+    end
   end
 end
