@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'i15r/pattern_matcher'
 require "spec"
 
@@ -31,6 +33,12 @@ describe I15R::PatternMatchers::Erb::TagContentMatcher do
     plain = %(<label for="user-name"> Name </label>)
     i18ned = %(<label for="user-name"> <%= I18n.t("users.new.name") %> </label>)
     I15R::PatternMatchers::Erb::TagContentMatcher.run(plain, "users.new").should == i18ned
+  end
+  
+  it "should replace a word with non-ascii characters" do
+    plain = %(<label for="when">Mañana</label>)
+    i18ned = %(<label for="when"><%= I18n.t("users.new.mañana") %></label>)
+    I15R::PatternMatchers::Erb::TagContentMatcher.run(plain, "users.new").should == i18ned    
   end
 
 end

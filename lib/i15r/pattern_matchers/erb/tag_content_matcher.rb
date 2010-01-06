@@ -10,7 +10,7 @@ module I15R
         end
         
         def self.match_tag_content_on_one_line
-          patt = /^(.*)>(\s*)(\w[\s\w:'"!?\.,]+)\s*<\/(.*)$/
+          patt = /^(.*)>(\s*)([[:alnum:][:upper:]][\s[:alnum:][:upper:][:punct:]]+)\s*<\/(.*)$/i
           matches(:erb) do |text, prefix|
             if m = patt.match(text)
               i18n_string = I15R::Base.get_i18n_message_string(m[3], prefix)
@@ -23,7 +23,7 @@ module I15R
         register_matcher :match_tag_content_on_one_line
 
         def self.match_tag_content_multiline
-          patt = /^(\s*)(\w[\w\s,]*)(.*)$/
+          patt = /^(\s*)([[:alnum:][:upper:]][[:alnum:][:upper:][:space:],']*)(.*)$/i
           matches(:erb) do |text, prefix|
             if m = patt.match(text)
               i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)

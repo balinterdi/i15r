@@ -8,7 +8,9 @@ module I15R
     attr_reader :options
 
     def self.get_i18n_message_string(text, prefix)
-      key = text.strip.downcase.gsub(/\s/, '_').gsub(/[\W]/, '')
+      #TODO: downcase does not work properly for accented chars, like 'Ú'
+      #TODO: [:punct:] would be nice but it includes _ which we don't want to remove
+      key = text.strip.downcase.gsub(/[\s]/, '_').gsub(/[!?.,:"';]/, '')
       indent = ""
       (0..prefix.split(".").size).each { |i| indent = "  " + indent }
       # silenced_if_testing do

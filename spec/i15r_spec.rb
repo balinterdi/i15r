@@ -1,4 +1,5 @@
-# puts %(#{File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib", "i15r")})
+# encoding: UTF-8
+
 $:.unshift File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib")
 
 require "i15r"
@@ -59,6 +60,14 @@ describe I15R::Base do
     it "should replace spaces with underscores" do
       I15R::Base.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
+    
+    it "should not rip out a non-english letter" do
+      I15R::Base.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
+    end
+    
+    it "should replace a ' with an underscore" do
+      I15R::Base.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
+    end    
   end
   
   describe "when substituting the plain contents with i18n message strings" do
