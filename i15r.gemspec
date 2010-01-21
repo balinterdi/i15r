@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{i15r}
-  s.version = "0.3.1"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Balint Erdi"]
-  s.date = %q{2009-12-14}
+  s.date = %q{2010-01-08}
   s.default_executable = %q{i15r}
   s.description = %q{      The internationalizer. Replaces plain text strings in your views and replaces them with I18n message strings so you only have to provide the translations.
 }
