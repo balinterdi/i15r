@@ -35,6 +35,7 @@ describe I15R::PatternMatchers::Erb::TagContentMatcher do
     I15R::PatternMatchers::Erb::TagContentMatcher.run(plain, "users.new").should == i18ned
   end
   
+  #1.8fail
   it "should replace a word with non-ascii characters" do
     plain = %(<label for="when">Mañana</label>)
     i18ned = %(<label for="when"><%= I18n.t("users.new.mañana") %></label>)

@@ -47,4 +47,5 @@ This is easy to fix, the whitespace has to be readded just like the punctuation
 * make prefix not replace the inferred message string prefix, but really act as a prefix. (e.g if anetcom is given as a prefix, and the inferred message string is 'users.new' it should not be 'anetcom.name', but 'anetcom.users.new.name')
 * write the necessary i18n strings back into the yaml file
 * make interactive mode possible. the user is asked about each message to be replaced. he can choose to replace it, skip it or even edit it. Ideally the message would be shown in its context.
+* make specs pass with ruby 1.8, see specs tagged with #1.8fail, probably the "weird characters" in the specs should be replaced by their unicode codes (e.g \u1234)
 
