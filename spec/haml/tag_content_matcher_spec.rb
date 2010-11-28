@@ -37,6 +37,12 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
   end
 
+  it "should suppress ( and ) in the generated I18n message string" do
+    plain = "%i (we need your current password to confirm your changes)"
+    i18ned = %(%i= I18n.t("users.new.we_need_your_current_password_to_confirm_your_changes"))
+    I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
+  end
+
   describe "when text has non-english characters" do
     it "should replace a tag's content where the tag is an implicit div" do
       plain = %(#form_head Türkçe)
