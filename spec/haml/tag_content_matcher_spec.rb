@@ -21,6 +21,12 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
   end
 
+  it "should replace /-s with an _" do
+    plain = %(%p Do not close/reload while loading)
+    i18ned = %(%p= I18n.t("users.new.do_not_close_reload_while_loading"))
+    I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
+  end
+
   it "should not replace an implict div with an assigned class" do
     plain = %(        .field)
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == plain
@@ -41,6 +47,16 @@ describe I15R::PatternMatchers::Haml::TagContentMatcher do
     plain = "%i (we need your current password to confirm your changes)"
     i18ned = %(%i= I18n.t("users.new.we_need_your_current_password_to_confirm_your_changes"))
     I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == i18ned
+  end
+
+  it "should not convert Ruby code to be evaluated" do
+    plain = "= yield"
+    I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == plain
+  end
+
+  it "should not convert comments" do
+    plain = "/ Do not remove the next line"
+    I15R::PatternMatchers::Haml::TagContentMatcher.run(plain, "users.new").should == plain
   end
 
   describe "when text has non-english characters" do
