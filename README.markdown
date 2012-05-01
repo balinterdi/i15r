@@ -32,7 +32,7 @@ It can process erb and haml files.
 
 ## Installation
 
-    gem install i15r --source http://gemcutter.org
+    gem install i15r
     
 ## Usage
 
@@ -80,4 +80,4 @@ Please note that this is an early version mainly built up of examples I've come 
 
 ## Licensing, contribution
 
-The source code of this gem can be found at [http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is released under the MIT-LICENSE, so you can basically do anything with it. However, if you think your modifications only make the tool better, please send a pull request or patch and I will consider merging in your changes. Any suggestions or feedback are welcome to <balint@bucionrails.com>.
+The source code of this gem can be found at [http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is released under the MIT-LICENSE, so you can basically do anything with it. However, if you think your modifications only make the tool better, please send a pull request or patch and I will consider merging in your changes. Any suggestions or feedback are welcome to <balint@balinterdi.com>.
