@@ -1,2 +1,4 @@
 *.rbc
 pkg/
+tmp/*
+.bundle/*

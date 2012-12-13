@@ -1,7 +1,5 @@
 # encoding: UTF-8
-
 require 'i15r/pattern_matcher'
-require "spec"
 
 # FIXME: since matcher blocks are added and executed in the Base class, that's what should be called
 # in the tests. That's not elegant and tests are not independent: they are coupled through the Base's run method

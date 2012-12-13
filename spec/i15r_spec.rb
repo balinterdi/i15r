@@ -1,11 +1,5 @@
 # encoding: UTF-8
-
-$:.unshift File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib")
-
 require "i15r"
-require "fakefs"
-
-$testing = true
 
 describe I15R::Base do
 
@@ -60,21 +54,21 @@ describe I15R::Base do
     it "should replace spaces with underscores" do
       I15R::Base.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
-    
+
     it "should not rip out a non-english letter" do
       I15R::Base.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
     end
-    
+
     it "should replace a ' with an underscore" do
       I15R::Base.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
-    end    
+    end
   end
-  
+
   describe "when substituting the plain contents with i18n message strings" do
     before do
       @i15r.options.prefix = nil
       @file_path = "app/views/users/new.html.erb"
-      File.open(@file_path, "w") { |f| f.write("<label for=\"user-name\">Name</label>") }
+      @i15r.stub(:get_content_from).and_return(%q{<label for=\"user-name\">Name</label>})
     end
 
     describe "and in dry-run mode" do
@@ -135,12 +129,11 @@ describe I15R::Base do
 
   describe "when running the internationalization for an ERB file" do
     before do
-      #TODO: this is not necessary once fakefs correctly fakes open, I think
       @i15r.stub!(:write_content_to).and_return(true)
       @file_path = "app/views/users/new.html.erb"
-      File.open(@file_path, "w") { |f| f.write("<label for=\"user-name\">Name</label>") }
+      @i15r.stub(:get_content_from).and_return(%q{<label for=\"user-name\">Name</label>})
     end
-    
+
     it "should only run ERB matchers" do
       @i15r.should_receive(:sub_plain_strings).with(anything, anything, :erb)
       @i15r.internationalize_file(@file_path)

@@ -13,9 +13,6 @@ module I15R
       key = text.strip.downcase.gsub(/[\s\/]+/, '_').gsub(/[!?.,:"';()]/, '')
       indent = ""
       (0..prefix.split(".").size).each { |i| indent = "  " + indent }
-      # silenced_if_testing do
-      #   puts "#{indent}#{key}: #{text}"
-      # end
       "#{prefix}.#{key}"
     end
 
@@ -88,11 +85,9 @@ module I15R
     end
 
     def show_diff(plain_row, i9l_row)
-      silenced_if_testing do
-        $stdout.puts "- #{plain_row}"
-        $stdout.puts "+ #{i9l_row}"
-        $stdout.puts
-      end
+      $stdout.puts "- #{plain_row}"
+      $stdout.puts "+ #{i9l_row}"
+      $stdout.puts
     end
 
     def internationalize_file(path)
@@ -104,15 +99,12 @@ module I15R
     end
 
     def display_indented_header(prefix)
-      silenced_if_testing do
-        puts "en:"
-      end
+      puts "en:"
       prefix_parts = prefix.split(".").each_with_index do |p, i|
         p = "#{p}:"
+        #TODO: perhaps " "*i is simpler
         (0..i).each { |i| p = "  " + p }
-        silenced_if_testing do
-          puts "#{p}"
-        end
+        puts "#{p}"
       end
     end
 
@@ -126,22 +118,6 @@ module I15R
     def internationalize!(path)
       files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
       files.each { |file| internationalize_file(file) }
-    end
-
-    private
-    def silenced_if_testing
-      if testing?
-        orig_stdout = $stdout
-        $stdout = File.new('/dev/null', 'w')
-      end
-      yield
-      if testing?
-        $stdout = orig_stdout
-      end
-    end
-
-    def testing?
-      $testing
     end
   end
 end
