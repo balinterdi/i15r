@@ -4,8 +4,32 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 
 require 'i15r'
 
-@i15r = I15R::Base.new
-@i15r.instance_eval do
-  parse_options(ARGV)
-  internationalize!(ARGV[-1])
+def parse_options(args)
+  options = {}
+  opts = OptionParser.new do |opts|
+    opts.banner = "Usage: ruby i15r.rb [options] <path_to_internationalize>"
+    opts.on("--prefix PREFIX",
+            "Apply PREFIX to generated I18n messages instead of deriving it from the path") do |prefix|
+      options[:prefix] = prefix
+    end
+    opts.on_tail("-p", "--pretend", "Do not write the files, just show what would be replaced") do
+      options[:dry_run] = true
+    end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+
+    opts.on_tail("--version", "Show version") do
+      puts I15R::VERSION
+      exit
+    end
+  end
+
+  opts.parse!(args)
+  options
 end
+
+@i15r = I15R.new(:config => parse_options(ARGV))
+@i15r.internationalize!(ARGV[-1])

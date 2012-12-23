@@ -1,4 +1,4 @@
-module I15R
+class I15R
   module PatternMatchers
     module Erb
     end

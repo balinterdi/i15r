@@ -1,4 +1,4 @@
-module I15R
+class I15R
   module PatternMatchers
     class Base
       # def self.inherited(descendant)
@@ -29,7 +29,7 @@ module I15R
         end
         i18ned_lines.join("\n")
       end
-      
+
       #TODO: use method_added to add to matchers so that
       # matchers do not have to be explicitly registered.
       def self.register_matcher(matcher_method)

@@ -1,10 +1,10 @@
 # encoding: UTF-8
 require "i15r"
 
-describe I15R::Base do
+describe I15R do
 
   before do
-    @i15r = I15R::Base.new
+    @i15r = I15R.new
   end
 
   describe "converting file paths to message prefixes" do
@@ -31,49 +31,38 @@ describe I15R::Base do
 
     it "should raise if path does not contain any Rails app directories" do
       path = "projects/doodle.rb"
-      lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(AppFolderNotFound)
-    end
-  end
-
-  describe "dry_run?" do
-    it "should return true when in dry run mode" do
-      @i15r.options.dry_run = true
-      @i15r.dry_run?.should == true
-    end
-    it "should return false when not in dry run mode" do
-      @i15r.options.dry_run = false
-      @i15r.dry_run?.should == false
+      lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(I15R::AppFolderNotFound)
     end
   end
 
   describe "turning plain messages into i18n message strings" do
     it "should downcase a single word" do
-      I15R::Base.get_i18n_message_string("Name", "users.new").should == "users.new.name"
+      I15R.get_i18n_message_string("Name", "users.new").should == "users.new.name"
     end
 
     it "should replace spaces with underscores" do
-      I15R::Base.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
+      I15R.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
 
     it "should not rip out a non-english letter" do
-      I15R::Base.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
+      I15R.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
     end
 
     it "should replace a ' with an underscore" do
-      I15R::Base.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
+      I15R.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
     end
   end
 
   describe "when substituting the plain contents with i18n message strings" do
     before do
-      @i15r.options.prefix = nil
+      @i15r = I15R.new
       @file_path = "app/views/users/new.html.erb"
       @i15r.stub(:get_content_from).and_return(%q{<label for=\"user-name\">Name</label>})
     end
 
     describe "and in dry-run mode" do
       before do
-        @i15r.stub!(:dry_run?).and_return(true)
+        @i15r.config = { :dry_run => true }
       end
       it "should not touch any files" do
         @i15r.should_not_receive(:write_content_to)
@@ -87,7 +76,7 @@ describe I15R::Base do
 
     describe "and not in dry-run mode" do
       before do
-        @i15r.stub!(:dry_run?).and_return(false)
+        @i15r.config = { :dry_run => false }
       end
       it "should write the files" do
         @i15r.should_receive(:write_content_to)

@@ -1,4 +1,4 @@
-module I15R
+class I15R
   module PatternMatchers
     module Haml
       class TagContentMatcher < Base
@@ -13,7 +13,7 @@ module I15R
           patt = /^(.*#[^\s=]+)\s+([^\s=]+[^=]*)$/
           matches(:haml) do |text, prefix|
             if m = patt.match(text)
-              i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)
+              i18n_string = I15R.get_i18n_message_string(m[2], prefix)
               i18ned_row = %(#{m[1]}= I18n.t("#{i18n_string}"))
               [m[0], i18ned_row]
             end
@@ -25,7 +25,7 @@ module I15R
           patt = /^(.*%[\w]+)\s+(.*)$/
           matches(:haml) do |text, prefix|
             if m = patt.match(text)
-              i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)
+              i18n_string = I15R.get_i18n_message_string(m[2], prefix)
               i18ned_row = %(#{m[1]}= I18n.t("#{i18n_string}"))
               [m[0], i18ned_row]
             end
@@ -37,7 +37,7 @@ module I15R
           patt = /^(\s*)([^.#!%=\/\s][[:alpha:][:upper:]\s\d\!\-\.\?\/]+)$/
           matches(:haml) do |text, prefix|
             if m = patt.match(text)
-              i18n_string = I15R::Base.get_i18n_message_string(m[2], prefix)
+              i18n_string = I15R.get_i18n_message_string(m[2], prefix)
               i18ned_row = %(#{m[1]}= I18n.t("#{i18n_string}"))
               [m[0], i18ned_row]
             end
