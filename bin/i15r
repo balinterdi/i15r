@@ -3,6 +3,10 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 
 require 'i15r'
+require 'i15r/version'
+require 'i15r/file_reader'
+require 'i15r/file_writer'
+require 'i15r/console_printer'
 
 def parse_options(args)
   options = {}
@@ -31,5 +35,8 @@ def parse_options(args)
   options
 end
 
-@i15r = I15R.new(:config => parse_options(ARGV))
+@i15r = I15R.new(I15R::FileReader.new,
+                 I15R::FileWriter.new,
+                 I15R::ConsolePrinter.new,
+                 parse_options(ARGV))
 @i15r.internationalize!(ARGV[-1])

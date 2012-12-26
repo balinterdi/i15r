@@ -1,5 +1,4 @@
 require 'i15r/pattern_matcher'
-require 'i15r/version'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -29,9 +28,11 @@ class I15R
 
   attr_reader :config
 
-  def initialize(opts={})
-    @config = I15R::Config.new(opts.fetch(:config, {}))
-    @config
+  def initialize(reader, writer, printer, config={})
+    @reader = reader
+    @writer = writer
+    @printer = printer
+    @config = I15R::Config.new(config)
   end
 
   def config=(hash)
@@ -56,26 +57,12 @@ class I15R
     (path_segments + file_name_without_extensions).join('.')
   end
 
-  def get_content_from(file)
-    File.read(File.expand_path(file))
-  end
-
-  def write_content_to(path, content)
-    open(File.expand_path(path), "w") { |f| f.write(content) }
-  end
-
-  def show_diff(plain_row, i9l_row)
-    $stdout.puts "- #{plain_row}"
-    $stdout.puts "+ #{i9l_row}"
-    $stdout.puts
-  end
-
   def internationalize_file(path)
-    text = get_content_from(path)
+    text = @reader.read(path)
     prefix = config.prefix || file_path_to_message_prefix(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
     i18ned_text = sub_plain_strings(text, prefix, template_type.to_sym)
-    write_content_to(path, i18ned_text) unless config.dry_run?
+    @writer.write(path, i18ned_text) unless config.dry_run?
   end
 
   def display_indented_header(prefix)
@@ -89,8 +76,8 @@ class I15R
   end
 
   def sub_plain_strings(text, prefix, file_type)
-    i15d = I15R::PatternMatchers::Base.run(text, prefix, file_type) do |plain_row, i9l_row|
-      show_diff(plain_row, i9l_row)
+    i15d = I15R::PatternMatchers::Base.run(text, prefix, file_type) do |old_row, new_row|
+      @printer.print(old_row, new_row)
     end
     i15d + "\n"
   end

@@ -1,10 +1,11 @@
 # encoding: UTF-8
-require "i15r"
+require 'spec_helper'
+require 'i15r'
 
 describe I15R do
 
   before do
-    @i15r = I15R.new
+    @i15r = I15R::Fixture.new
   end
 
   describe "converting file paths to message prefixes" do
@@ -30,6 +31,7 @@ describe I15R do
     end
 
     it "should raise if path does not contain any Rails app directories" do
+      #FIXME: Why should we deal only with Rails apps?
       path = "projects/doodle.rb"
       lambda { @i15r.file_path_to_message_prefix(path) }.should raise_error(I15R::AppFolderNotFound)
     end
@@ -44,44 +46,33 @@ describe I15R do
       I15R.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
     end
 
-    it "should not rip out a non-english letter" do
+    it "should not rip out a non-ascii letter" do
       I15R.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
     end
 
     it "should replace a ' with an underscore" do
+      #FIXME: then it should be done as advertised :)
       I15R.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
     end
   end
 
-  describe "when substituting the plain contents with i18n message strings" do
-    before do
-      @i15r = I15R.new
-      @file_path = "app/views/users/new.html.erb"
-      @i15r.stub(:get_content_from).and_return(%q{<label for=\"user-name\">Name</label>})
-    end
+  describe "writing the changed file" do
+    let(:path) { "app/views/users/new.html.erb" }
+    let(:writer) { mock("writer") }
+    let(:reader) { mock("reader") }
+    let(:printer) { stub("printer", :print => "foo") }
 
-    describe "and in dry-run mode" do
-      before do
-        @i15r.config = { :dry_run => true }
-      end
-      it "should not touch any files" do
-        @i15r.should_not_receive(:write_content_to)
-        @i15r.internationalize_file(@file_path)
-      end
-      it "should display the diff" do
-        @i15r.should_receive(:show_diff)
-        @i15r.internationalize_file(@file_path)
-      end
-    end
+    subject { I15R.new(reader, writer, printer) }
 
-    describe "and not in dry-run mode" do
-      before do
-        @i15r.config = { :dry_run => false }
-      end
-      it "should write the files" do
-        @i15r.should_receive(:write_content_to)
-        @i15r.internationalize_file(@file_path)
-      end
+    specify do
+      reader.should_receive(:read).with(path)
+        .and_return(%Q{<label for="user-name">Name</label>})
+      writer.should_receive(:write)
+        .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>\n})
+      printer.should_receive(:print)
+        .with(%Q{<label for="user-name">Name</label>},
+              %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>})
+      subject.internationalize_file(path)
     end
   end
 
@@ -117,15 +108,14 @@ describe I15R do
   end # "when an explicit prefix option was given"
 
   describe "when running the internationalization for an ERB file" do
-    before do
-      @i15r.stub!(:write_content_to).and_return(true)
-      @file_path = "app/views/users/new.html.erb"
-      @i15r.stub(:get_content_from).and_return(%q{<label for=\"user-name\">Name</label>})
-    end
+    let(:reader) { mock("reader", :read => %Q{<label for="user-name">Name</label>}) }
+    let(:path) { "app/views/users/new.html.erb" }
+
+    subject { I15R::Fixture.new(reader) }
 
     it "should only run ERB matchers" do
-      @i15r.should_receive(:sub_plain_strings).with(anything, anything, :erb)
-      @i15r.internationalize_file(@file_path)
+      subject.should_receive(:sub_plain_strings).with(anything, anything, :erb)
+      subject.internationalize_file(path)
     end
   end
 
