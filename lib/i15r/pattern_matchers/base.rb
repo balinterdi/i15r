@@ -1,12 +1,6 @@
 class I15R
   module PatternMatchers
     class Base
-      # def self.inherited(descendant)
-      #   descendant.methods(false).grep /^match/ do |matcher_method|
-      #     descendant.method(matcher_method).call
-      #   end
-      # end
-
       def self.matches(file_type, &block)
         @@matchers ||= {}
         @@matchers[file_type] ||= []

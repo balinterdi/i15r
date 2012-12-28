@@ -60,7 +60,7 @@ describe I15R do
     let(:path) { "app/views/users/new.html.erb" }
     let(:writer) { mock("writer") }
     let(:reader) { mock("reader") }
-    let(:printer) { stub("printer", :print => "foo") }
+    let(:printer) { mock("printer") }
 
     subject { I15R.new(reader, writer, printer) }
 
@@ -106,17 +106,5 @@ describe I15R do
       @i15r.sub_plain_strings(plain_snippet, prefix_option, :erb).should == i18ned_snippet
     end
   end # "when an explicit prefix option was given"
-
-  describe "when running the internationalization for an ERB file" do
-    let(:reader) { mock("reader", :read => %Q{<label for="user-name">Name</label>}) }
-    let(:path) { "app/views/users/new.html.erb" }
-
-    subject { I15R::Fixture.new(reader) }
-
-    it "should only run ERB matchers" do
-      subject.should_receive(:sub_plain_strings).with(anything, anything, :erb)
-      subject.internationalize_file(path)
-    end
-  end
 
 end

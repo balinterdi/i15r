@@ -4,7 +4,7 @@ class I15R
   class AppFolderNotFound < Exception; end
 
   def self.get_i18n_message_string(text, prefix)
-    #TODO: downcase does not work properly for accented chars, like 'Ú'
+    #TODO: downcase does not work properly for accented chars, like 'Ú', see function in ActiveSupport that deals with this
     #TODO: [:punct:] would be nice but it includes _ which we don't want to remove
     key = text.strip.downcase.gsub(/[\s\/]+/, '_').gsub(/[!?.,:"';()]/, '')
     indent = ""
@@ -76,10 +76,11 @@ class I15R
   end
 
   def sub_plain_strings(text, prefix, file_type)
-    i15d = I15R::PatternMatchers::Base.run(text, prefix, file_type) do |old_row, new_row|
-      @printer.print(old_row, new_row)
+    pm = I15R::PatternMatcher.new(prefix, file_type)
+    transformed_text = pm.run(text) do |old_line, new_line|
+      @printer.print(old_line, new_line)
     end
-    i15d + "\n"
+    transformed_text + "\n"
   end
 
   def internationalize!(path)
