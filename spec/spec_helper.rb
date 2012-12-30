@@ -1,7 +1,12 @@
-$:.unshift File.join(File.expand_path(File.dirname(__FILE__)), "..", "lib")
+current_dir = File.expand_path(File.dirname(__FILE__))
+$:.unshift File.join(current_dir, "..", "lib")
 
 require 'i15r'
 require 'i15r/file_reader'
+
+Dir["#{current_dir}/support/**/*.rb"].each do |file|
+  require file
+end
 
 class I15R
   class NullWriter
