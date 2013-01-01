@@ -3,6 +3,10 @@ RSpec::Matchers.define :internationalize do |non_i18n_string|
     @i18n_string = i18n_string
   end
 
+  chain :to_the_same do
+    @i18n_string = non_i18n_string
+  end
+
   match do |pattern_matcher|
     @converted = pattern_matcher.run(non_i18n_string)
     @converted == @i18n_string
