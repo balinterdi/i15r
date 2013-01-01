@@ -37,25 +37,6 @@ describe I15R do
     end
   end
 
-  describe "turning plain messages into i18n message strings" do
-    it "should downcase a single word" do
-      I15R.get_i18n_message_string("Name", "users.new").should == "users.new.name"
-    end
-
-    it "should replace spaces with underscores" do
-      I15R.get_i18n_message_string("New name", "users.index").should == "users.index.new_name"
-    end
-
-    it "should not rip out a non-ascii letter" do
-      I15R.get_i18n_message_string("Mañana", "users.index").should == "users.index.mañana"
-    end
-
-    it "should replace a ' with an underscore" do
-      #FIXME: then it should be done as advertised :)
-      I15R.get_i18n_message_string("C'est ça", "users.index").should == "users.index.cest_ça"
-    end
-  end
-
   describe "writing the changed file" do
     let(:path) { "app/views/users/new.html.erb" }
     let(:writer) { mock("writer") }

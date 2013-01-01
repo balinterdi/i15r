@@ -89,5 +89,8 @@ describe I15R::PatternMatcher do
                            .to(%(%p= I18n.t("users.show.please_check_your_inbox_and_click_on_the_activation_link"))) }
 
     it { should internationalize("please visit").to('= I18n.t("users.show.please_visit")') }
+    it { should internationalize("Mañana").to('= I18n.t("users.show.mañana")') }
+    it { should internationalize("C'est ça").to('= I18n.t("users.show.cest_ça")') }
   end
+
 end

@@ -3,15 +3,6 @@ require 'i15r/pattern_matcher'
 class I15R
   class AppFolderNotFound < Exception; end
 
-  def self.get_i18n_message_string(text, prefix)
-    #TODO: downcase does not work properly for accented chars, like 'Ú', see function in ActiveSupport that deals with this
-    #TODO: [:punct:] would be nice but it includes _ which we don't want to remove
-    key = text.strip.downcase.gsub(/[\s\/]+/, '_').gsub(/[!?.,:"';()]/, '')
-    indent = ""
-    (0..prefix.split(".").size).each { |i| indent = "  " + indent }
-    "#{prefix}.#{key}"
-  end
-
   class Config
     def initialize(config)
       @options = config
@@ -37,10 +28,6 @@ class I15R
 
   def config=(hash)
     @config = I15R::Config.new(hash)
-  end
-
-  def prefix
-    @options.prefix
   end
 
   def file_path_to_message_prefix(file)
