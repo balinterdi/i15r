@@ -7,6 +7,7 @@ require 'i15r/version'
 require 'i15r/file_reader'
 require 'i15r/file_writer'
 require 'i15r/console_printer'
+require 'optparse'
 
 def parse_options(args)
   options = {}

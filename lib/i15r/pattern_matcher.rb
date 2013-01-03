@@ -73,7 +73,12 @@ class I15R
     class HamlTransformer
 
       def transform(pattern, match_data, match, line, i18n_string)
-        no_leading_whitespace = line.gsub(/^\s+/, '')
+        leading_whitespace = line[/^(\s+)/, 1]
+        no_leading_whitespace = if leading_whitespace
+          line[leading_whitespace.size...line.size]
+        else
+          line
+        end
         if ['/', '-'].include?(no_leading_whitespace[0])
           return line
         end
@@ -85,7 +90,7 @@ class I15R
         i = 0
         haml_segment = true
         attribute_list_start = nil
-        segments = line.split(/\s+/)
+        segments = no_leading_whitespace.split(/\s+/)
         while haml_segment
           s = segments[i]
           if attribute_list_start
@@ -113,14 +118,11 @@ class I15R
           end
         else
           haml_markup = ''
-          content = line
-          unless no_leading_whitespace[0] == '='
-            first_non_whitespace = content.size - no_leading_whitespace.size
-            content.insert(first_non_whitespace, '= ')
-          end
+          content = no_leading_whitespace
+          content.insert(0, '= ') unless content[0] == '='
         end
 
-        new_line = haml_markup + content
+        new_line = (leading_whitespace or '') + haml_markup + content
         new_line.gsub(match, %(I18n.t("#{i18n_string}")))
 
       end

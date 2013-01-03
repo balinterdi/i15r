@@ -106,6 +106,8 @@ describe I15R::PatternMatcher do
     it { should internationalize(%(%p Egy, kettő, három, négy, öt.))
                              .to(%(%p= I18n.t("users.show.egy_kettő_három_négy_öt"))) }
     it { should internationalize(%(Türkçe)).to(%(= I18n.t("users.show.türkçe"))) }
+    it { should internationalize(%(    %h3 Top Scorers))
+                             .to(%(    %h3= I18n.t("users.show.top_scorers"))) }
 
     describe "when already evaluated" do
       it { should internationalize(%(%p= link_to 'New user', new_user_path))
