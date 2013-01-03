@@ -127,6 +127,10 @@ describe I15R::PatternMatcher do
       it { should internationalize(%(= submit_tag "Create user"))
                                .to(%(= submit_tag I18n.t("users.show.create_user"))) }
     end
+
+    describe "evaluated ruby code" do
+      it { should internationalize('- if foo == :bar').to_the_same }
+    end
   end
 
 end

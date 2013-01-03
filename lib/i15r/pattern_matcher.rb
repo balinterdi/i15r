@@ -71,15 +71,17 @@ class I15R
     end
 
     class HamlTransformer
-      HAML_START_SYMBOLS = ["%", "#"]
-      HAML_EVAL = '='
 
       def transform(pattern, match_data, match, line, i18n_string)
+        no_leading_whitespace = line.gsub(/^\s+/, '')
+        if ['/', '-'].include?(no_leading_whitespace[0])
+          return line
+        end
+
         # Space can only occur in haml markup in an attribute list
         # enclosed in { } or ( ). If the first segment has { or (
         # we are still in the markup and need to go on to find the beginning
         # of the string to be replaced
-        return line if match[0] == '/'
         i = 0
         haml_segment = true
         attribute_list_start = nil
@@ -112,7 +114,6 @@ class I15R
         else
           haml_markup = ''
           content = line
-          no_leading_whitespace = content.gsub(/^\s+/, '')
           unless no_leading_whitespace[0] == '='
             first_non_whitespace = content.size - no_leading_whitespace.size
             content.insert(first_non_whitespace, '= ')
