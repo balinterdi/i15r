@@ -9,7 +9,7 @@ class I15R
       :erb => [
         />(?<tag-content>[[:space:][:alnum:][:punct:]]+?)<\//,
         /<a\s+title=['"](?<link-title>.+?)['"]/,
-        /(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
+        /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
         /<%=\s*link_to\s+(?<title>['"].+?['"])/,
         /<%=.*label(_tag)?[^,]+?(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))[^,]+%>.*$/,
         /<%=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
