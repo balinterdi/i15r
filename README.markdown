@@ -1,4 +1,5 @@
-# I15r
+# I15r ![Build Status](https://api.travis-ci.org/balinterdi/i15r.png)
+
 
 ## Summary
 
