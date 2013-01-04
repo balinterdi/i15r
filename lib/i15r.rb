@@ -39,9 +39,16 @@ class I15R
       raise AppFolderNotFound, "No app. subfolders were found to determine prefix. Path is #{File.expand_path(file)}"
     end
     first_segment_index = segments.index(subdir) + 1
-    file_name_without_extensions = segments.last.split('.')[0..0]
+    file_name_without_extensions = segments.last.split('.').first
+    if file_name_without_extensions and file_name_without_extensions[0] == '_'
+      file_name_without_extensions = file_name_without_extensions[1..-1]
+    end
     path_segments = segments.slice(first_segment_index...-1)
-    (path_segments + file_name_without_extensions).join('.')
+    if path_segments.empty?
+      file_name_without_extensions
+    else
+      "#{path_segments.join('.')}.#{file_name_without_extensions}"
+    end
   end
 
   def internationalize_file(path)

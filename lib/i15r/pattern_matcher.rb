@@ -72,7 +72,7 @@ class I15R
       def transform(match_data, match, line, i18n_string)
         leading_whitespace = line[/^(\s+)/, 1]
         no_leading_whitespace = if leading_whitespace
-          line[leading_whitespace.size...line.size]
+          line[leading_whitespace.size..-1]
         else
           line
         end
@@ -107,7 +107,7 @@ class I15R
         until_first_whitespace = segments[0...i].join(' ')
         if HAML_SYMBOLS.any? { |sym| until_first_whitespace.index(sym) }
           haml_markup = until_first_whitespace
-          content = segments[i...segments.size].join(' ')
+          content = segments[i..-1].join(' ')
           if haml_markup.index('=')
             haml_markup += ' '
           else

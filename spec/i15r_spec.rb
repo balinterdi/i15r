@@ -39,15 +39,13 @@ describe I15R do
 
   describe "writing the changed file" do
     let(:path) { "app/views/users/new.html.erb" }
+    let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
     let(:writer) { mock("writer") }
-    let(:reader) { mock("reader") }
     let(:printer) { mock("printer") }
 
     subject { I15R.new(reader, writer, printer) }
 
     specify do
-      reader.should_receive(:read).with(path)
-        .and_return(%Q{<label for="user-name">Name</label>})
       writer.should_receive(:write)
         .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>\n})
       printer.should_receive(:print)
@@ -57,20 +55,39 @@ describe I15R do
     end
   end
 
-  describe "when no prefix option was given" do
-    it "should correctly internationalize messages using a prefix derived from the path" do
-      message_prefix = "users.new"
-      plain_snippet = <<-EOS
-        <label for="user-name">Name</label>
-        <input type="text" id="user-name" name="user[name]" />
-      EOS
-      i18ned_snippet = <<-EOS
-        <label for="user-name"><%= I18n.t("#{message_prefix}.name") %></label>
-        <input type="text" id="user-name" name="user[name]" />
-      EOS
-      @i15r.sub_plain_strings(plain_snippet, message_prefix, :erb).should == i18ned_snippet
+  describe "generating the prefix" do
+    let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
+    let(:writer) { mock("writer") }
+
+    subject { I15R.new(reader, writer, I15R::NullPrinter.new) }
+
+    describe "for a view" do
+      let(:path) { "app/views/users/new.html.erb" }
+      specify do
+        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>\n})
+        subject.internationalize_file(path)
+      end
     end
-  end # "when no prefix option was given"
+
+    describe "for a partial" do
+      let(:path) { "app/views/users/_badge.html.erb" }
+      specify do
+        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("users.badge.name") %></label>\n})
+        subject.internationalize_file(path)
+      end
+    end
+
+    describe "when there is an explicit prefix" do
+      let(:path) { "app/views/users/_badge.html.erb" }
+
+      subject { I15R.new(reader, writer, I15R::NullPrinter.new, :prefix => "nice") }
+
+      specify do
+        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("nice.name") %></label>\n})
+        subject.internationalize_file(path)
+      end
+    end
+  end
 
   describe "when an explicit prefix option was given" do
     it "should correctly internationalize messages using the prefix" do
