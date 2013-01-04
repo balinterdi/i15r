@@ -7,21 +7,21 @@ class I15R
     HAML_SYMBOLS = ["%", "#", "{", "}", "(", ")", ".", "_", "-"]
     PATTERNS = {
       :erb => [
-        />(?<tag-content>[[:space:][:alnum:][:punct:]]+?)<\//,
-        /<a\s+title=['"](?<link-title>.+?)['"]/,
-        /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
         /<%=\s*link_to\s+(?<title>['"].+?['"])/,
         /<%=.*label(_tag)?[^,]+?(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))[^,]+%>.*$/,
         /<%=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
-        /<%=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/
+        /<%=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/,
+        />(?<tag-content>[[:space:][:alnum:][:punct:]]+?)<\//,
+        /<a\s+title=['"](?<link-title>.+?)['"]/,
+        /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</
       ],
       :haml => [
-        %r{^\s*(?<content>[[:space:][:alnum:]'/(),]+)$},
-        %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\s+(?<content>.+)$},
         /=.*link_to\s+(?<title>['"].+?['"]),/,
         /=.*label(_tag)?[^,]+?(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))[^,]*$/,
         /=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
-        /=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/
+        /=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/,
+        %r{^\s*(?<content>[[:space:][:alnum:]'/(),]+)$},
+        %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\s+(?<content>.+)$}
       ]
     }
 
@@ -41,19 +41,18 @@ class I15R
     def run(text)
       lines = text.split("\n")
       new_lines = lines.map do |line|
-        old_line = line.dup
-        new_line = PATTERNS[@file_type].each_with_object([line]) do |pattern, transformed_lines|
-          l = transformed_lines.last
-          if m = pattern.match(l)
+        new_line = line
+        PATTERNS[@file_type].detect do |pattern|
+          if m = pattern.match(line)
             m.names.each do |group_name|
               if /\w/.match(m[group_name])
-                transformed_lines << @transformer.transform(pattern, m, m[group_name], l, i18n_string(m[group_name]))
+                new_line = @transformer.transform(m, m[group_name], line, i18n_string(m[group_name]))
               end
             end
           end
-        end.last
-        if block_given? and old_line != new_line
-          yield old_line, new_line
+        end
+        if block_given? and line != new_line
+          yield line, new_line
         end
         new_line
       end
@@ -62,9 +61,7 @@ class I15R
 
     class ErbTransformer
 
-      def transform(pattern, match_data, match, line, i18n_string)
-        #FIXME: Handle the different rails_helper variations here
-        #instead of trying to match every last varation with regexes
+      def transform(match_data, match, line, i18n_string)
         if match_data.to_s.index("<%")
           line.gsub(match, %(I18n.t("#{i18n_string}")))
         else
@@ -76,7 +73,7 @@ class I15R
 
     class HamlTransformer
 
-      def transform(pattern, match_data, match, line, i18n_string)
+      def transform(match_data, match, line, i18n_string)
         leading_whitespace = line[/^(\s+)/, 1]
         no_leading_whitespace = if leading_whitespace
           line[leading_whitespace.size...line.size]

@@ -32,11 +32,11 @@ describe I15R::PatternMatcher do
     end
 
     describe "in tag attributes" do
-      it { should internationalize(%(This is it: <a title="site root" href="/"><img src="site_logo.png" /></a>))
-                               .to(%(<%= I18n.t("users.new.this_is_it") %><a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)) }
+      it { should internationalize(%(<a title="site root" href="/"><img src="site_logo.png" /></a>))
+                               .to(%(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)) }
 
-      it { should internationalize(%(C'est ça: <a title="site root" href="/"><img src="site_logo.png" /></a>))
-                               .to(%(<%= I18n.t("users.new.cest_ça") %><a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)) }
+      it { should internationalize(%(<a title="site root" href="/"><img src="site_logo.png" /></a>))
+                               .to(%(<a title="<%= I18n.t("users.new.site_root") %>" href="/"><img src="site_logo.png" /></a>)) }
     end
 
     describe "Rails helper methods" do
