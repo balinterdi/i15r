@@ -11,15 +11,17 @@ class I15R
         /<a\s+title=['"](?<link-title>.+?)['"]/,
         /(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
         /<%=\s*link_to\s+(?<title>['"].+?['"])/,
-        /<%=.*label(_tag)?.*,\s*(?<label-title>['"].+?['"])/,
-        /<%=.*submit(_tag)?\s+(?<submit-text>['"].+?['"])/
+        /<%=.*label(_tag)?[^,]+?(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))[^,]+%>.*$/,
+        /<%=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
+        /<%=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/
       ],
       :haml => [
         %r{^\s*(?<content>[[:space:][:alnum:]'/(),]+)$},
         %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\s+(?<content>.+)$},
-        %r{=.*link_to\s+(?<title>['"].+?['"]),},
-        %r{=.*label(_tag)?.*,\s*(?<label-title>['"].+?['"])},
-        %r{=.*submit(_tag)?\s+(?<submit-text>['"].+?['"])}
+        /=.*link_to\s+(?<title>['"].+?['"]),/,
+        /=.*label(_tag)?[^,]+?(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))[^,]*$/,
+        /=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
+        /=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/
       ]
     }
 
@@ -61,6 +63,8 @@ class I15R
     class ErbTransformer
 
       def transform(pattern, match_data, match, line, i18n_string)
+        #FIXME: Handle the different rails_helper variations here
+        #instead of trying to match every last varation with regexes
         if match_data.to_s.index("<%")
           line.gsub(match, %(I18n.t("#{i18n_string}")))
         else

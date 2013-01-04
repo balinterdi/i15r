@@ -49,6 +49,12 @@ describe I15R::PatternMatcher do
       it { should internationalize(%(<%= f.label :name, "Name" %>))
                                .to(%(<%= f.label :name, I18n.t("users.index.name") %>)) }
 
+      it { should internationalize(%(    <%= f.label :name %><br />))
+                               .to(%(    <%= f.label I18n.t("users.index.name") %><br />)) }
+
+      it { should internationalize(%(    <%= label_tag :name, "Real Name" %><br />))
+                               .to(%(    <%= label_tag :name, I18n.t("users.index.real_name") %><br />)) }
+
       it { should internationalize(%(<%= f.submit "Create user" %>))
                                .to(%(<%= f.submit I18n.t("users.index.create_user") %>)) }
 
@@ -68,11 +74,22 @@ describe I15R::PatternMatcher do
         it { should internationalize(%(<%= label_tag :name, "Név" %>))
                                  .to(%(<%= label_tag :name, I18n.t("users.index.név") %>)) }
 
+        it { should internationalize(%(  <%= label_tag :name, "Real Name" %><br />))
+                                 .to(%(  <%= label_tag :name, I18n.t("users.index.real_name") %><br />)) }
+
         it { should internationalize(%(<%= f.submit "Új felhasználó" %>))
                                  .to(%(<%= f.submit I18n.t("users.index.Új_felhasználó") %>)) }
 
         it { should internationalize(%(<%= submit_tag "Új felhasználó" %>))
                                  .to(%(<%= submit_tag I18n.t("users.index.Új_felhasználó") %>)) }
+
+        it { should internationalize(%(<%= f.submit :create_user %>))
+                                 .to(%(<%= f.submit I18n.t("users.index.create_user") %>)) }
+
+        it { should internationalize(%(  <%= f.submit :create_user %>))
+                                 .to(%(  <%= f.submit I18n.t("users.index.create_user") %>)) }
+
+
       end
     end
   end
@@ -106,28 +123,35 @@ describe I15R::PatternMatcher do
     it { should internationalize(%(%p Egy, kettő, három, négy, öt.))
                              .to(%(%p= I18n.t("users.show.egy_kettő_három_négy_öt"))) }
     it { should internationalize(%(Türkçe)).to(%(= I18n.t("users.show.türkçe"))) }
-    it { should internationalize(%(    %h3 Top Scorers))
-                             .to(%(    %h3= I18n.t("users.show.top_scorers"))) }
+    it { should internationalize(%(  %h3 Top Scorers))
+                             .to(%(  %h3= I18n.t("users.show.top_scorers"))) }
 
     describe "when already evaluated" do
       it { should internationalize(%(%p= link_to 'New user', new_user_path))
                                .to(%(%p= link_to I18n.t("users.show.new_user"), new_user_path)) }
       it { should internationalize(%(= f.label :password, "Password"))
                                .to(%(= f.label :password, I18n.t("users.show.password"))) }
-      it { should internationalize(%(             = f.label :password, "Password"))
-                               .to(%(             = f.label :password, I18n.t("users.show.password"))) }
+      it { should internationalize(%(    = f.label :password, "Password"))
+                               .to(%(    = f.label :password, I18n.t("users.show.password"))) }
       it { should internationalize(%(%p= link_to 'Új felhasználó', new_user_path))
                                .to(%(%p= link_to I18n.t("users.show.Új_felhasználó"), new_user_path)) }
       it { should internationalize(%(#new_user_link= link_to 'Új felhasználó', new_user_path))
                                .to(%(#new_user_link= link_to I18n.t("users.show.Új_felhasználó"), new_user_path)) }
       it { should internationalize(%(= f.label :password, "Contraseña"))
                                .to(%(= f.label :password, I18n.t("users.show.contraseña"))) }
-      it { should internationalize(%(             = f.label :password, "Contraseña"))
-                               .to(%(             = f.label :password, I18n.t("users.show.contraseña"))) }
+      it { should internationalize(%(    = f.label :password, "Contraseña"))
+                               .to(%(    = f.label :password, I18n.t("users.show.contraseña"))) }
+      it { should internationalize(%(    = f.label :name))
+                               .to(%(    = f.label I18n.t("users.show.name"))) }
+
       it { should internationalize(%(= f.submit "Create user"))
                                .to(%(= f.submit I18n.t("users.show.create_user"))) }
       it { should internationalize(%(= submit_tag "Create user"))
                                .to(%(= submit_tag I18n.t("users.show.create_user"))) }
+      it { should internationalize(%(  = f.submit :user_details %>))
+                               .to(%(  = f.submit I18n.t("users.show.user_details") %>)) }
+      it { should internationalize(%(  = submit_tag :user_details %>))
+                               .to(%(  = submit_tag I18n.t("users.show.user_details") %>)) }
     end
 
     describe "evaluated ruby code" do
