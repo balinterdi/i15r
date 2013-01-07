@@ -19,7 +19,8 @@ class I15R
     def write(path, content); end
   end
   class NullPrinter
-    def print(old_row, new_row); end
+    def print_diff(old_row, new_row); end
+    def println(text); end
   end
 
   class Fixture < I15R

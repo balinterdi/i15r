@@ -59,6 +59,8 @@ class I15R
     text = @reader.read(path)
     prefix = config.prefix || file_path_to_message_prefix(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
+    @printer.println("#{path}:")
+    @printer.println("")
     i18ned_text = sub_plain_strings(text, prefix, template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
   end
@@ -76,7 +78,7 @@ class I15R
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default)
     transformed_text = pm.run(text) do |old_line, new_line|
-      @printer.print(old_line, new_line)
+      @printer.print_diff(old_line, new_line)
     end
     transformed_text + "\n"
   end

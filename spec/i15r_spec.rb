@@ -48,7 +48,9 @@ describe I15R do
     specify do
       writer.should_receive(:write)
         .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>\n})
-      printer.should_receive(:print)
+      printer.should_receive(:println).with("app/views/users/new.html.erb:")
+      printer.should_receive(:println).with("")
+      printer.should_receive(:print_diff)
         .with(%Q{<label for="user-name">Name</label>},
               %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>})
       subject.internationalize_file(path)
