@@ -58,11 +58,11 @@ All files with an erb or haml suffix in that directory or somewhere in the hiera
 
 By default, i15r overwrites all the source files with the i18n message strings it generates. If you first want to see what would be replaced, you should do:
 
-    i15r app/views/users -p
+    i15r app/views/users -n
 
 or
 
-    i15r app/views/users --pretend
+    i15r app/views/users --dry-run
 
 ### Custom prefix
 

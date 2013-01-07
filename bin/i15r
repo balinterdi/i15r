@@ -17,7 +17,7 @@ def parse_options(args)
             "Apply PREFIX to generated I18n messages instead of deriving it from the path") do |prefix|
       options[:prefix] = prefix
     end
-    opts.on("-p", "--pretend", "Do not write the files, just show what would be replaced") do
+    opts.on("-n", "--dry-run", "Do not write the files, just show the diff") do
       options[:dry_run] = true
     end
     opts.on("--no-default", "Do not insert the replaced string as the :default in the I18n string") do
