@@ -146,6 +146,11 @@ describe I15R::PatternMatcher do
     it { should internationalize(%(Türkçe)).to(%(= I18n.t("users.show.türkçe"))) }
     it { should internationalize(%(  %h3 Top Scorers))
                              .to(%(  %h3= I18n.t("users.show.top_scorers"))) }
+    it { should internationalize(%(        %div{ :class => "field option", :style => "float:left" })).to_the_same }
+    it { should internationalize(%(        %div{ :class => "field option", :style => "float:left" } Name))
+                             .to(%(        %div{ :class => "field option", :style => "float:left" }= I18n.t("users.show.name"))) }
+    it { should internationalize(%(        %div(class: "field option", style: "float:left") Name))
+                             .to(%(        %div(class: "field option", style: "float:left")= I18n.t("users.show.name"))) }
 
     describe "when the default option is given" do
       let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => true) }

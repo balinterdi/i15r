@@ -17,7 +17,9 @@ class I15R
         /=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
         /=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/,
         %r{^\s*(?<content>[[:space:][:alnum:]'/(),]+)$},
-        %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\s+(?<content>.+)$}
+        %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\{.+?\}\s+(?<content>.+)$},
+        %r{^\s*[[#{HAML_SYMBOLS.join('')}][:alnum:]]+?\(.+?\)\s+(?<content>.+)$},
+        %r{^\s*[[#{(HAML_SYMBOLS - ['{', '}', '(', ')']).join('')}][:alnum:]]+?\s+(?<content>.+)$}
       ]
     }
 
@@ -124,15 +126,15 @@ class I15R
             unless attribute_list_start
               haml_segment = false
             end
-            i += 1
           end
+          i += 1
         end
 
         until_first_whitespace = segments[0...i].join(' ')
         if HAML_SYMBOLS.any? { |sym| until_first_whitespace.index(sym) }
           haml_markup = until_first_whitespace
           content = segments[i..-1].join(' ')
-          if haml_markup.index('=')
+          if haml_markup[-1] == '='
             haml_markup += ' '
           else
             haml_markup += '= '
@@ -144,8 +146,7 @@ class I15R
         end
 
         new_line = (leading_whitespace or '') + haml_markup + content
-        new_line.gsub(match, i18n_string(translation_key, match))
-
+        new_line.gsub(match.gsub(/\s+$/, ''), i18n_string(translation_key, match))
       end
     end
 
