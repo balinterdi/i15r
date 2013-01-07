@@ -9,6 +9,12 @@ Dir["#{current_dir}/support/**/*.rb"].each do |file|
 end
 
 class I15R
+  class StringReader
+    def read(path)
+      "norf"
+    end
+  end
+
   class NullWriter
     def write(path, content); end
   end
@@ -17,11 +23,15 @@ class I15R
   end
 
   class Fixture < I15R
-    def initialize(reader=FileReader.new,
+    def initialize(reader=StringReader.new,
                    writer=NullWriter.new,
                    printer=NullPrinter.new,
                    config={})
       super(reader, writer, printer, config)
+    end
+
+    def self.with_config(config)
+      new(StringReader.new, NullWriter.new, NullPrinter.new, config)
     end
   end
 end

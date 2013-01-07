@@ -29,6 +29,15 @@ describe I15R::PatternMatcher do
 
       it { should internationalize(%(<label for="when">Mañana</label>))
                                .to(%(<label for="when"><%= I18n.t("users.new.mañana") %></label>)) }
+
+      describe "when the default option is given" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.new", :erb, :add_default => true) }
+
+        it { should internationalize('<h1>New flight</h1>')
+                                 .to('<h1><%= I18n.t("users.new.new_flight", :default => "New flight") %></h1>') }
+        it { should internationalize(%(    <%= f.label :name %><br />))
+                                 .to(%(    <%= f.label I18n.t("users.new.name", :default => "name") %><br />)) }
+      end
     end
 
     describe "in tag attributes" do
@@ -63,6 +72,13 @@ describe I15R::PatternMatcher do
       it { should internationalize(%(<%= submit_tag "Create user" %>))
                                .to(%(<%= submit_tag I18n.t("users.index.create_user") %>)) }
 
+      describe "when the default option is given" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.index", :erb, :add_default => true) }
+
+        it { should internationalize(%(<%= submit_tag "Create user" %>))
+                                 .to(%(<%= submit_tag I18n.t("users.index.create_user", :default => "Create user") %>)) }
+      end
+
       describe "when text has non-ascii characters" do
         it { should internationalize(%(<p class="highlighted"><%= link_to 'Új felhasználó', new_user_path %>?</p>))
                                  .to(%(<p class="highlighted"><%= link_to I18n.t("users.index.Új_felhasználó"), new_user_path %>?</p>)) }
@@ -90,8 +106,6 @@ describe I15R::PatternMatcher do
 
         it { should internationalize(%(  <%= f.submit :create_user %>))
                                  .to(%(  <%= f.submit I18n.t("users.index.create_user") %>)) }
-
-
       end
     end
   end
@@ -127,6 +141,12 @@ describe I15R::PatternMatcher do
     it { should internationalize(%(Türkçe)).to(%(= I18n.t("users.show.türkçe"))) }
     it { should internationalize(%(  %h3 Top Scorers))
                              .to(%(  %h3= I18n.t("users.show.top_scorers"))) }
+
+    describe "when the default option is given" do
+      let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => true) }
+      it { should internationalize(%(  %h3 Top Scorers))
+                               .to(%(  %h3= I18n.t("users.show.top_scorers", :default => "Top Scorers"))) }
+    end
 
     describe "when already evaluated" do
       it { should internationalize(%(%p= link_to 'New user', new_user_path))

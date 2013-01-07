@@ -21,13 +21,14 @@ class I15R
       ]
     }
 
-    def initialize(prefix, file_type)
+    def initialize(prefix, file_type, options={})
       @prefix = prefix
       @file_type = file_type
-      @transformer = self.class.const_get("#{file_type.to_s.capitalize}Transformer").new
+      transformer_class = self.class.const_get("#{file_type.to_s.capitalize}Transformer")
+      @transformer = transformer_class.new(options[:add_default])
     end
 
-    def i18n_string(text)
+    def translation_key(text)
       #TODO: downcase does not work properly for accented chars, like 'Ú', see function in ActiveSupport that deals with this
       #TODO: [:punct:] would be nice but it includes _ which we don't want to remove
       key = text.strip.downcase.gsub(/[\s\/]+/, '_').gsub(/[!?.,:"';()]/, '')
@@ -42,7 +43,7 @@ class I15R
           if m = pattern.match(line)
             m.names.each do |group_name|
               if /\w/.match(m[group_name])
-                new_line = @transformer.transform(m, m[group_name], line, i18n_string(m[group_name]))
+                new_line = @transformer.transform(m, m[group_name], line, translation_key(m[group_name]))
               end
             end
           end
@@ -55,21 +56,42 @@ class I15R
       new_lines.join("\n")
     end
 
-    class ErbTransformer
+    class Transformer
+      def initialize(add_default)
+        @add_default = add_default
+      end
 
-      def transform(match_data, match, line, i18n_string)
+      private
+        def i18n_string(key, original)
+          if @add_default
+            if original.to_s[0] == ':'
+              original = original.to_s[1..-1]
+            end
+            unless original[0] == "'" or original[0] == '"'
+              original = %("#{original}")
+            end
+            %(I18n.t("#{key}", :default => #{original}))
+          else
+            %(I18n.t("#{key}"))
+          end
+        end
+    end
+
+    class ErbTransformer < Transformer
+
+      def transform(match_data, match, line, translation_key)
         if match_data.to_s.index("<%")
-          line.gsub(match, %(I18n.t("#{i18n_string}")))
+          line.gsub(match, i18n_string(translation_key, match))
         else
-          line.gsub(match, %(<%= I18n.t("#{i18n_string}") %>))
+          line.gsub(match, "<%= #{i18n_string(translation_key, match)} %>")
         end
       end
 
     end
 
-    class HamlTransformer
+    class HamlTransformer < Transformer
 
-      def transform(match_data, match, line, i18n_string)
+      def transform(match_data, match, line, translation_key)
         leading_whitespace = line[/^(\s+)/, 1]
         no_leading_whitespace = if leading_whitespace
           line[leading_whitespace.size..-1]
@@ -120,7 +142,7 @@ class I15R
         end
 
         new_line = (leading_whitespace or '') + haml_markup + content
-        new_line.gsub(match, %(I18n.t("#{i18n_string}")))
+        new_line.gsub(match, i18n_string(translation_key, match))
 
       end
     end

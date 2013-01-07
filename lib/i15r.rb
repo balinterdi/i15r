@@ -15,6 +15,10 @@ class I15R
     def dry_run?
       @options.fetch(:dry_run, false)
     end
+
+    def add_default
+      @options.fetch(:add_default, true)
+    end
   end
 
   attr_reader :config
@@ -31,7 +35,7 @@ class I15R
   end
 
   def file_path_to_message_prefix(file)
-    segments = File.expand_path(file).split('/').select { |segment| !segment.empty? }
+    segments = File.expand_path(file).split('/').reject { |segment| segment.empty? }
     subdir = %w(views helpers controllers models).find do |app_subdir|
        segments.index(app_subdir)
     end
@@ -70,7 +74,7 @@ class I15R
   end
 
   def sub_plain_strings(text, prefix, file_type)
-    pm = I15R::PatternMatcher.new(prefix, file_type)
+    pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default)
     transformed_text = pm.run(text) do |old_line, new_line|
       @printer.print(old_line, new_line)
     end

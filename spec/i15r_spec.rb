@@ -47,13 +47,14 @@ describe I15R do
 
     specify do
       writer.should_receive(:write)
-        .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>\n})
+        .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>\n})
       printer.should_receive(:print)
         .with(%Q{<label for="user-name">Name</label>},
-              %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>})
+              %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>})
       subject.internationalize_file(path)
     end
   end
+
 
   describe "generating the prefix" do
     let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
@@ -64,7 +65,8 @@ describe I15R do
     describe "for a view" do
       let(:path) { "app/views/users/new.html.erb" }
       specify do
-        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name") %></label>\n})
+        writer.should_receive(:write)
+          .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>\n})
         subject.internationalize_file(path)
       end
     end
@@ -72,7 +74,8 @@ describe I15R do
     describe "for a partial" do
       let(:path) { "app/views/users/_badge.html.erb" }
       specify do
-        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("users.badge.name") %></label>\n})
+        writer.should_receive(:write)
+          .with(path, %Q{<label for="user-name"><%= I18n.t("users.badge.name", :default => "Name") %></label>\n})
         subject.internationalize_file(path)
       end
     end
@@ -83,7 +86,39 @@ describe I15R do
       subject { I15R.new(reader, writer, I15R::NullPrinter.new, :prefix => "nice") }
 
       specify do
-        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("nice.name") %></label>\n})
+        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("nice.name", :default => "Name") %></label>\n})
+        subject.internationalize_file(path)
+      end
+    end
+  end
+
+  describe "the add_default option" do
+    let(:path) { "app/users/views/index.html.haml" }
+    let(:patter_matcher) { mock("pattern matcher", :run => "") }
+    let(:i15r) { I15R::Fixture.new }
+
+    subject { I15R::Fixture.new }
+
+    describe "when true" do
+      before do
+        subject.config = { :add_default => true }
+      end
+      specify do
+        I15R::PatternMatcher.should_receive(:new)
+                            .with(anything, anything, hash_including(:add_default => true))
+                            .and_return(patter_matcher)
+        subject.internationalize_file(path)
+      end
+    end
+
+    describe "when false" do
+      before do
+        subject.config = { :add_default => false }
+      end
+      specify do
+        I15R::PatternMatcher.should_receive(:new)
+                            .with(anything, anything, hash_including(:add_default => false))
+                            .and_return(patter_matcher)
         subject.internationalize_file(path)
       end
     end
@@ -97,7 +132,7 @@ describe I15R do
         <input type="text" id="user-name" name="user[name]" />
       EOS
       i18ned_snippet = <<-EOS
-        <label for="user-name"><%= I18n.t("#{prefix_option}.name") %></label>
+        <label for="user-name"><%= I18n.t("#{prefix_option}.name", :default => "Name") %></label>
         <input type="text" id="user-name" name="user[name]" />
       EOS
 
