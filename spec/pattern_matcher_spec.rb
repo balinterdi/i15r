@@ -38,6 +38,11 @@ describe I15R::PatternMatcher do
         it { should internationalize(%(    <%= f.label :name %><br />))
                                  .to(%(    <%= f.label I18n.t("users.new.name", :default => "name") %><br />)) }
       end
+
+      describe "when a line is already international" do
+        it { should internationalize(%(  <%= f.label I18n.t("users.new.name") %>)).to_the_same }
+        it { should internationalize(%(  <%= f.label t("users.new.name") %>)).to_the_same }
+      end
     end
 
     describe "in tag attributes" do
@@ -178,6 +183,11 @@ describe I15R::PatternMatcher do
 
     describe "evaluated ruby code" do
       it { should internationalize('- if foo == :bar').to_the_same }
+    end
+
+    describe "when a line is already international" do
+      it { should internationalize(%(  = f.label I18n.t("users.new.name") )).to_the_same }
+      it { should internationalize(%(  = f.label t("users.new.name") )).to_the_same }
     end
   end
 

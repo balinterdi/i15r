@@ -80,6 +80,7 @@ class I15R
     class ErbTransformer < Transformer
 
       def transform(match_data, match, line, translation_key)
+        return line if line.match /\bt\(/
         if match_data.to_s.index("<%")
           line.gsub(match, i18n_string(translation_key, match))
         else
@@ -92,6 +93,7 @@ class I15R
     class HamlTransformer < Transformer
 
       def transform(match_data, match, line, translation_key)
+        return line if line.match /\bt\(/
         leading_whitespace = line[/^(\s+)/, 1]
         no_leading_whitespace = if leading_whitespace
           line[leading_whitespace.size..-1]
