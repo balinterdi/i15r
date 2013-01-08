@@ -90,12 +90,12 @@ The file will then contain:
 I15R takes the 80-20 approach. It focuses on finding most of the text that needs
 to be replaced in your templates and replacing them with the correct i18n strings.
 It forgoes the 100% hit rate in favor of getting the 80% right and keeping the code
-(relatively) simple. So what I encourage you to [submit][issue_tracker] primarily is to report
-strings that should not have been replaced or have been replaced incorrectly.
+(relatively) simple. Consequently, please [report][issue_tracker] any bug that concerns
+strings that should not have been replaced or ones that have been replaced incorrectly.
 
 A good practice is to first run i15r with the --dry-run option to see what would be replaced
-and then run it for real. You can also run it on files that have already been "internationalized"
-since i15r will just skip those rows.
+and then run it for real, without the --dry-run option. You can also run it on files that have
+already been "internationalized" since i15r will just skip those rows.
 
 ## Contributing
 
