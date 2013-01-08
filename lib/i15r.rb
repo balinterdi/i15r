@@ -65,16 +65,6 @@ class I15R
     @writer.write(path, i18ned_text) unless config.dry_run?
   end
 
-  def display_indented_header(prefix)
-    puts "en:"
-    prefix_parts = prefix.split(".").each_with_index do |p, i|
-      p = "#{p}:"
-      #TODO: perhaps " "*i is simpler
-      (0..i).each { |i| p = "  " + p }
-      puts "#{p}"
-    end
-  end
-
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default)
     transformed_text = pm.run(text) do |old_line, new_line|
