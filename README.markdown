@@ -1,11 +1,11 @@
 # I15r ![Build Status](https://api.travis-ci.org/balinterdi/i15r.png)
 
-
 ## Summary
 
-I15r (Internationalizer) searches for all the non-i18n texts in your views in
-the given files/directory and replaces them with I18n messages. The message
-string is based on the file in which the text was found and the text itself
+I15r (Internationalizer) searches for all the non-i18n texts in your erb and haml templates in
+the given file/directory and replaces them with I18n messages.
+
+The message string is based on the path of the file in which the text was found and the text itself
 that was replaced.
 
 E.g
@@ -32,21 +32,23 @@ will be replaced by
     <label for="user-name"><%= I18n.t("member.users.edit.name") %></label>
     <input type="text" id="user-name" name="user[name]" />
 
-It can process erb and haml files.
-
 ## Installation
+
+### Standalone
 
     gem install i15r
 
-or put the following in your Gemfile:
+### In-app
 
-   gem 'i15r', '~> 0.4.4'
+Put the following in your Gemfile:
+
+    gem 'i15r', '~> 0.5.1'
 
 ## Usage
 
 ### Convert a single file
 
-    i15r path/leading/to/view
+    i15r path/leading/to/template
 
 ### Convert all files in a directory (deep search)
 
@@ -66,7 +68,9 @@ or
 
 ### Custom prefix
 
-If you don't want the filename to appear in the i18n message string, you can pass a prefix parameter that will be used to generate the message strings. For example if you have the following in a file called app/views/users/new.html.erb:
+If you don't want the filename to appear in the i18n message string,
+you can pass a prefix parameter that will be used to generate the message strings.
+For example if you have the following in a file called app/views/users/new.html.erb:
 
     <label for="user-name">Name</label>
     <input type="text" id="user-name" name="user[name]" />
@@ -80,17 +84,23 @@ The file will then contain:
     <label for="user-name"><%= I18n.t("my_project.name") %></label>
     <input type="text" id="user-name" name="user[name]" />
 
-## Disclaimer (sort of)
+## Design principles & suggested use
 
-Please note that this is an early version mainly built up of examples I've come
-through doing client work. I am pretty sure there are a number of cases which
-i15r -at the moment- does not handle well (or at all). If you find such an
-example, please [let me know][issue_tracker] or if you feel motivated, submit a
-patch. Oh, yes, to prevent unwanted changes to your view files, you should use
-a SCM (that goes without saying, of course) and probably use the --pretend
-option.
+I15R takes the 80-20 approach. It focuses on finding most of the text that needs
+to be replaced in your templates and replacing them with the correct i18n strings.
+It forgoes the 100% hit rate in favor of getting the 80% right and keeping the code
+(relatively) simple. So what I encourage you to [submit][issue_tracker] primarily is to report
+strings that should not have been replaced or have been replaced incorrectly.
 
-[issue_tracker]: http://github.com/balinterdi/i15r/issues
+A good practice is to first run i15r with the --dry-run option to see what would be replaced
+and then run it for real. You can also run it on files that have already been "internationalized"
+since i15r will just skip those rows.
+
+## Contributing
+
+Please submit any bugs or feature requests to the [issue tracker][issue_tracker].
+
+If you'd like to contibute, please see [Contributing][contributing].
 
 ## Licensing, contribution
 
@@ -100,3 +110,6 @@ released under the MIT-LICENSE, so you can basically do anything with it.
 However, if you think your modifications only make the tool better, please send
 a pull request or patch and I will consider merging in your changes. Any
 suggestions or feedback are welcome to <balint@balinterdi.com>.
+
+[issue_tracker]: https://github.com/balinterdi/i15r/issues
+[contributing]: https://github.com/balinterdi/i15r/blob/master/CONTRIBUTING.md
