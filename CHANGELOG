@@ -1,5 +1,0 @@
-v0.1.2  More i18n in rails helpers, suppress printing of message strings in test mode, script can run on several files
-
-v0.1.1  Whitespace issues cleared up.
-
-v0.1    First version.
