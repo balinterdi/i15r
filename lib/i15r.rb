@@ -85,6 +85,7 @@ class I15R
 
   def internationalize!(path)
     @printer.println "Running in dry-run mode" if config.dry_run?
+    path = "app" if path.nil?
     files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
     files.each { |file| internationalize_file(file) }
   end
