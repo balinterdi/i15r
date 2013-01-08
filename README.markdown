@@ -103,7 +103,7 @@ Please submit any bugs or feature requests to the [issue tracker][issue_tracker]
 
 If you'd like to contibute, please see [Contributing][contributing].
 
-## Licensing, contribution
+## Licensing
 
 The source code of this gem can be found at
 [http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is
