@@ -1,4 +1,5 @@
-# I15r ![Build Status](https://api.travis-ci.org/balinterdi/i15r.png)
+# I15r ![Build Status](https://api.travis-ci.org/balinterdi/i15r.png) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/balinterdi/i15r)
+
 
 ## Summary
 
