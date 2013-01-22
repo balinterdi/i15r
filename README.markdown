@@ -1,5 +1,9 @@
 # I15r ![Build Status](https://api.travis-ci.org/balinterdi/i15r.png) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/balinterdi/i15r)
 
+## Goal
+
+You probably prefer making your views better to manually replacing strings in them to make them i18n compatible.
+If I got that one right, i15r is for you. It automates the process that would otherwise drove most of us nuts.
 
 ## Summary
 
