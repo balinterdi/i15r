@@ -9,6 +9,10 @@ describe I15R::PatternMatcher do
   describe "in erb templates" do
     let(:pattern_matcher) { I15R::PatternMatcher.new("users.new", :erb) }
 
+    describe "no-markup content" do
+      it { should internationalize("please visit").to('<%= I18n.t("users.new.please_visit") %>') }
+    end
+
     describe "in tag content" do
       it { should internationalize('<h1>New flight</h1>')
                                .to('<h1><%= I18n.t("users.new.new_flight") %></h1>') }

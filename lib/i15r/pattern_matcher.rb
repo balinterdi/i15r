@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class I15R
   class PatternMatcher
     HAML_SYMBOLS = ["%", "#", "{", "}", "(", ")", ".", "_", "-"]
@@ -9,7 +10,8 @@ class I15R
         /<%=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/,
         />(?<tag-content>[[:space:][:alnum:][:punct:]]+?)<\//,
         /<a\s+title=['"](?<link-title>.+?)['"]/,
-        /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</
+        /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
+        /^\s*(?<no-markup-content>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*)/
       ],
       :haml => [
         /=.*link_to\s+(?<title>['"].+?['"]),/,
