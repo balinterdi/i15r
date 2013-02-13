@@ -2,8 +2,8 @@
 
 ## Goal
 
-You probably prefer making your views better to manually replacing strings in them to make them i18n compatible.
-If I got that one right, i15r is for you. It automates the process that would otherwise drove most of us nuts.
+You prefer polishing your views to manually replacing strings in them to make them i18n compatible.
+If I got that one right, i15r is for you. It automates the process that would otherwise drive most of us nuts.
 
 ## Summary
 
@@ -107,14 +107,17 @@ Please submit any bugs or feature requests to the [issue tracker][issue_tracker]
 
 If you'd like to contibute, please see [Contributing][contributing].
 
-## Licensing
+## License
 
-The source code of this gem can be found at
-[http://github.com/balinterdi/i15r/](http://github.com/balinterdi/i15r/). It is
-released under the MIT-LICENSE, so you can basically do anything with it.
-However, if you think your modifications only make the tool better, please send
-a pull request or patch and I will consider merging in your changes. Any
-suggestions or feedback are welcome to <balint@balinterdi.com>.
+Copyright (c) 2009 Balint Erdi
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [issue_tracker]: https://github.com/balinterdi/i15r/issues
 [contributing]: https://github.com/balinterdi/i15r/blob/master/CONTRIBUTING.md
