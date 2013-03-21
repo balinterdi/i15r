@@ -101,6 +101,10 @@ A good practice is to first run i15r with the --dry-run option to see what would
 and then run it for real, without the --dry-run option. You can also run it on files that have
 already been "internationalized" since i15r will just skip those rows.
 
+### See also
+
+Your next step is probably to create a YML locale file containing all the strings i15r generated. You're in luck! [missing_t][missing_t] is a gem that can do this for you.
+
 ## Contributing
 
 Please submit any bugs or feature requests to the [issue tracker][issue_tracker].
@@ -121,3 +125,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [issue_tracker]: https://github.com/balinterdi/i15r/issues
 [contributing]: https://github.com/balinterdi/i15r/blob/master/CONTRIBUTING.md
+[missing_t]: https://github.com/balinterdi/missing_t
