@@ -43,6 +43,15 @@ describe I15R::PatternMatcher do
                                  .to(%(    <%= f.label I18n.t("users.new.name", :default => "name") %><br />)) }
       end
 
+      describe "when the default option is false" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.new", :erb, :add_default => false) }
+
+        it { should internationalize('<h1>New flight</h1>')
+                                 .to('<h1><%= I18n.t("users.new.new_flight") %></h1>') }
+        it { should internationalize(%(    <%= f.label :name %><br />))
+                                 .to(%(    <%= f.label I18n.t("users.new.name") %><br />)) }
+      end
+
       describe "when a line is already international" do
         it { should internationalize(%(  <%= f.label I18n.t("users.new.name") %>)).to_the_same }
         it { should internationalize(%(  <%= f.label t("users.new.name") %>)).to_the_same }
@@ -86,6 +95,13 @@ describe I15R::PatternMatcher do
 
         it { should internationalize(%(<%= submit_tag "Create user" %>))
                                  .to(%(<%= submit_tag I18n.t("users.index.create_user", :default => "Create user") %>)) }
+      end
+
+      describe "when the default option is false" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.index", :erb, :add_default => false) }
+
+        it { should internationalize(%(<%= submit_tag "Create user" %>))
+                                 .to(%(<%= submit_tag I18n.t("users.index.create_user") %>)) }
       end
 
       describe "when text has non-ascii characters" do
@@ -160,6 +176,12 @@ describe I15R::PatternMatcher do
       let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => true) }
       it { should internationalize(%(  %h3 Top Scorers))
                                .to(%(  %h3= I18n.t("users.show.top_scorers", :default => "Top Scorers"))) }
+    end
+
+    describe "when the default option is false" do
+      let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => false ) }
+      it { should internationalize(%(  %h3 Top Scorers))
+                               .to(%(  %h3= I18n.t("users.show.top_scorers"))) }
     end
 
     describe "when already evaluated" do
