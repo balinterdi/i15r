@@ -17,6 +17,10 @@ def parse_options(args)
             "Apply PREFIX to generated I18n messages instead of deriving it from the path") do |prefix|
       options[:prefix] = prefix
     end
+    opts.on("--prefix_with_path PREFIX",
+            "Apply PREFIX to generated I18n messages in front of the path") do |prefix|
+      options[:prefix_with_path] = prefix
+    end
     opts.on("-n", "--dry-run", "Do not write the files, just show the diff") do
       options[:dry_run] = true
     end

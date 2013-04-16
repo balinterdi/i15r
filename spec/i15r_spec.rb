@@ -92,6 +92,17 @@ describe I15R do
         subject.internationalize_file(path)
       end
     end
+
+    describe "when there is an explicit prefix with path" do
+      let(:path) { "app/views/users/_badge.html.erb" }
+
+      subject { I15R.new(reader, writer, I15R::NullPrinter.new, :prefix_with_path => "nice") }
+
+      specify do
+        writer.should_receive(:write).with(path, %Q{<label for="user-name"><%= I18n.t("nice.users.badge.name", :default => "Name") %></label>\n})
+        subject.internationalize_file(path)
+      end
+    end
   end
 
   describe "the add_default option" do
