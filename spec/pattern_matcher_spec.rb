@@ -43,6 +43,15 @@ describe I15R::PatternMatcher do
                                  .to(%(    <%= f.label I18n.t("users.new.name", :default => "name") %><br />)) }
       end
 
+      describe "when the default option is false" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.new", :erb, :add_default => false) }
+
+        it { should internationalize('<h1>New flight</h1>')
+                                 .to('<h1><%= I18n.t("users.new.new_flight") %></h1>') }
+        it { should internationalize(%(    <%= f.label :name %><br />))
+                                 .to(%(    <%= f.label I18n.t("users.new.name") %><br />)) }
+      end
+
       describe "when a line is already international" do
         it { should internationalize(%(  <%= f.label I18n.t("users.new.name") %>)).to_the_same }
         it { should internationalize(%(  <%= f.label t("users.new.name") %>)).to_the_same }
