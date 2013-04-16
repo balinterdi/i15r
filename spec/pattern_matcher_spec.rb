@@ -97,6 +97,13 @@ describe I15R::PatternMatcher do
                                  .to(%(<%= submit_tag I18n.t("users.index.create_user", :default => "Create user") %>)) }
       end
 
+      describe "when the default option is false" do
+        let(:pattern_matcher) { I15R::PatternMatcher.new("users.index", :erb, :add_default => false) }
+
+        it { should internationalize(%(<%= submit_tag "Create user" %>))
+                                 .to(%(<%= submit_tag I18n.t("users.index.create_user") %>)) }
+      end
+
       describe "when text has non-ascii characters" do
         it { should internationalize(%(<p class="highlighted"><%= link_to 'Új felhasználó', new_user_path %>?</p>))
                                  .to(%(<p class="highlighted"><%= link_to I18n.t("users.index.Új_felhasználó"), new_user_path %>?</p>)) }
@@ -169,6 +176,12 @@ describe I15R::PatternMatcher do
       let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => true) }
       it { should internationalize(%(  %h3 Top Scorers))
                                .to(%(  %h3= I18n.t("users.show.top_scorers", :default => "Top Scorers"))) }
+    end
+
+    describe "when the default option is false" do
+      let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml, :add_default => false ) }
+      it { should internationalize(%(  %h3 Top Scorers))
+                               .to(%(  %h3= I18n.t("users.show.top_scorers"))) }
     end
 
     describe "when already evaluated" do
