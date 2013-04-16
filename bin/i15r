@@ -23,6 +23,9 @@ def parse_options(args)
     opts.on("--no-default", "Do not insert the replaced string as the :default in the I18n string") do
       options[:add_default] = false
     end
+    opts.on("--override_i18n_method METHOD", "Replace I18n.t with METHOD") do |m|
+      options[:override_i18n_method] = m
+    end
 
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
