@@ -9,7 +9,11 @@ class I15R
     end
 
     def prefix
-      @options.fetch(:prefix, nil)
+      @options.fetch(:prefix, nil) || prefix_with_path
+    end
+
+    def prefix_with_path
+      @options.fetch(:prefix_with_path, nil)
     end
 
     def dry_run?
@@ -55,13 +59,18 @@ class I15R
     end
   end
 
+  def full_prefix(path)
+    prefix = [config.prefix]
+    prefix << file_path_to_message_prefix(path) if include_path?
+    prefix.compact.join('.')
+  end
+
   def internationalize_file(path)
     text = @reader.read(path)
-    prefix = config.prefix || file_path_to_message_prefix(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
     @printer.println("#{path}:")
     @printer.println("")
-    i18ned_text = sub_plain_strings(text, prefix, template_type.to_sym)
+    i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
   end
 
@@ -79,4 +88,9 @@ class I15R
     files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
     files.each { |file| internationalize_file(file) }
   end
+
+  def include_path?
+    config.prefix_with_path || !config.prefix
+  end
+
 end
