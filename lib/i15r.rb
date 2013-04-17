@@ -115,19 +115,15 @@ class I15R
     key
   end
 
+  # array of prompts, leaving the first and last item intact
   def key_prompts(key)
-    keys = key.split('.')
+    keylist = key.split('.')
     choices = []
-    until keys.length <= 1
-      choices << keys.join('.')
-      keys = remove_unimportant_key(keys)
+    until keylist.length <= 1
+      choices << keylist.join('.')
+      keylist.delete_at(-2)
     end
     choices
-  end
-    #
-  # remove the second to last key entry
-  def remove_unimportant_key(keys)
-    keys.values_at(0..-3, -1)
   end
 
   def store_key(key, string)
