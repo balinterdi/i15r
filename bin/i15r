@@ -30,6 +30,9 @@ def parse_options(args)
     opts.on("--override_i18n_method METHOD", "Replace I18n.t with METHOD") do |m|
       options[:override_i18n_method] = m
     end
+    opts.on("-i", "--interactive", "Interactively prompt for string changes") do |m|
+      options[:interactive] = true
+    end
 
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts

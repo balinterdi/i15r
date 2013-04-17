@@ -1,4 +1,5 @@
 require 'i15r/pattern_matcher'
+require 'highline/import'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -26,6 +27,10 @@ class I15R
 
     def override_i18n_method
       @options.fetch(:override_i18n_method, nil)
+    end
+
+    def interactive?
+      @options.fetch(:interactive, false)
     end
   end
 
@@ -81,10 +86,56 @@ class I15R
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
-    transformed_text = pm.run(text) do |old_line, new_line|
+    transformed_text = pm.run(text) do |old_line, new_line, key, string|
       @printer.print_diff(old_line, new_line)
+      if config.interactive?
+        key = edit_change(key, string)
+      end
+      store_key(key, string)
+      key
     end
     transformed_text + "\n"
+  end
+
+  def edit_change(key, string)
+    choices = key_prompts(key)
+
+    choose do |menu|
+      menu.index = :number
+      menu.index_suffix = '. '
+      menu.prompt = "Pick a key for string: #{string}"
+      menu.choice "Enter key manually" do
+        key = ask "Enter key:"
+      end
+      choices.each do |c|
+        menu.choice c do key = c end
+      end
+
+    end
+    key
+  end
+
+  def key_prompts(key)
+    keys = key.split('.')
+    choices = []
+    until keys.length <= 1
+      choices << keys.join('.')
+      keys = remove_unimportant_key(keys)
+    end
+    choices
+  end
+    #
+  # remove the second to last key entry
+  def remove_unimportant_key(keys)
+    keys.values_at(0..-3, -1)
+  end
+
+  def store_key(key, string)
+    keys << [key, string]
+  end
+
+  def keys
+    @keys ||= []
   end
 
   def internationalize!(path)
