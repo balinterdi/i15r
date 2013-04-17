@@ -89,22 +89,23 @@ class I15R
     transformed_text = pm.run(text) do |old_line, new_line, key, string|
       @printer.print_diff(old_line, new_line)
       if config.interactive?
-        key = edit_change(key, string)
+        key = edit_key(key, string)
       end
       store_key(key, string)
-      key
+      key # return key at end of block, in case it was changed
     end
     transformed_text + "\n"
   end
 
-  def edit_change(key, string)
+  def edit_key(key, string)
     choices = key_prompts(key)
 
     choose do |menu|
       menu.index = :number
       menu.index_suffix = '. '
-      menu.prompt = "Pick a key for string: #{string}"
-      menu.choice "Enter key manually" do
+      menu.header = "\n\n\n#{string}\n#{key}"
+      menu.prompt = "Choose a key"
+      menu.choice "<Enter key manually>" do
         key = ask "Enter key:"
       end
       choices.each do |c|
