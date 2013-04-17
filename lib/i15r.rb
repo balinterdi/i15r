@@ -81,10 +81,22 @@ class I15R
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
-    transformed_text = pm.run(text) do |old_line, new_line|
-      @printer.print_diff(old_line, new_line)
+    transformed_text = pm.run(text) do |change|
+      @printer.print_diff(change[:old_line], change[:new_line])
+      store_key(change[:key], change[:string])
     end
+    #keys.each do |k|
+      #puts("#{k[0]}: #{k[1]}")
+    #end
     transformed_text + "\n"
+  end
+
+  def store_key(key, string)
+    keys << [key, string]
+  end
+
+  def keys
+    @keys ||= []
   end
 
   def internationalize!(path)
