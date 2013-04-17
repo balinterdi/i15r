@@ -81,14 +81,39 @@ class I15R
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
-    transformed_text = pm.run(text) do |change|
-      @printer.print_diff(change[:old_line], change[:new_line])
-      store_key(change[:key], change[:string])
+    transformed_text = pm.run(text) do |old_line, new_line, key, string|
+      @printer.print_diff(old_line, new_line)
+      #@printer.println("Key: #{key}\nString: #{String}")
+      k = edit_change(key, string)
+      store_key(key, string)
     end
-    #keys.each do |k|
-      #puts("#{k[0]}: #{k[1]}")
-    #end
+    puts keys
     transformed_text + "\n"
+  end
+
+  def edit_change(key, string)
+    done = false
+    k = key
+    until done do
+      puts("Key: #{k}\nString: #{string}")
+      g = gets
+      case g
+      when /c/
+        # change
+      when /-/
+        k = remove_key_string(k)
+      when /u/
+        k = key
+      else
+        done = true
+      end
+    end
+    k
+  end
+
+  # remove the second to last key entry
+  def remove_key_string(key)
+    keys = key.split('.').values_at(0..-3, -1).join('.')
   end
 
   def store_key(key, string)

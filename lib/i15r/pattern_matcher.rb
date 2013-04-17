@@ -43,7 +43,7 @@ class I15R
       lines = text.split("\n")
       new_lines = lines.map do |line|
         new_line = line
-        key, match = nil
+        m, key, match, string = nil
         PATTERNS[@file_type].detect do |pattern|
           if m = pattern.match(line)
             m.names.each do |group_name|
@@ -56,7 +56,12 @@ class I15R
           end
         end
         if block_given? and line != new_line
-          yield old_line: line, new_line: new_line, key: key.to_s, string: add_quotes(match)
+          _, _, changed_key, _ = yield line, new_line, key, add_quotes(match)
+          # retransform, if key changed
+          if changed_key
+            puts changed_key.to_s, key.to_s
+            new_line = @transformer.transform(m, match, line, changed_key)
+          end
         end
         new_line
       end
