@@ -91,6 +91,7 @@ The file will then contain:
 
 If you want the a prefix plus the file path to appear in the i18n message string,
 you can pass a prefix_with_path parameter:
+
     i15r app/views/users/new.html.erb --prefix_with_path my_project
 
 The above file will then contain:
@@ -102,11 +103,15 @@ The above file will then contain:
 
 If you don't want to use the full I18n.t name, use the
 override_i18n_method parameter:
+
     i15r app/views/users/new.html.erb --override_i18n_method t
 
 This will cause output that normally results in:
+
     <label for="user-name"><%= I18n.t("users.new.name") %></label>
+
 to result in
+
     <label for="user-name"><%= t("users.new.name") %></label>
 
 ### No default translation
@@ -115,13 +120,19 @@ If you want to skip the default translation, you must add the
 --no-default flag
 
 For example, if calling
+
     i15r app/views/users/new.html.erb
+
 results in
+
     <label for="user-name"><%= I18n.t("users.new.name", :default => 'Name') %></label>
 
 Adding the --no-default flag
+
     i15r app/views/users/new.html.erb --no-default
+
 results in
+
     <label for="user-name"><%= I18n.t("users.new.name") %></label>
 
 ## Design principles & suggested use
