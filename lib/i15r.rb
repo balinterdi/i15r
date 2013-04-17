@@ -23,6 +23,10 @@ class I15R
     def add_default
       @options.fetch(:add_default, true)
     end
+
+    def override_i18n_method
+      @options.fetch(:override_i18n_method, nil)
+    end
   end
 
   attr_reader :config
@@ -75,7 +79,8 @@ class I15R
   end
 
   def sub_plain_strings(text, prefix, file_type)
-    pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default)
+    pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
+                                  :override_i18n_method => config.override_i18n_method)
     transformed_text = pm.run(text) do |old_line, new_line|
       @printer.print_diff(old_line, new_line)
     end
