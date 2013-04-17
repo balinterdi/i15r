@@ -28,6 +28,10 @@ class I15R
     def override_i18n_method
       @options.fetch(:override_i18n_method, nil)
     end
+
+    def interactive?
+      @options.fetch(:interactive, false)
+    end
   end
 
   attr_reader :config
@@ -84,7 +88,9 @@ class I15R
                                   :override_i18n_method => config.override_i18n_method)
     transformed_text = pm.run(text) do |old_line, new_line, key, string|
       @printer.print_diff(old_line, new_line)
-      key = edit_change(key, string)
+      if config.interactive?
+        key = edit_change(key, string)
+      end
       store_key(key, string)
       key
     end
