@@ -56,10 +56,9 @@ class I15R
           end
         end
         if block_given? and line != new_line
-          _, _, changed_key, _ = yield line, new_line, key, add_quotes(match)
+          changed_key = yield line, new_line, key, add_quotes(match)
           # retransform, if key changed
-          if changed_key
-            puts changed_key.to_s, key.to_s
+          if changed_key != key
             new_line = @transformer.transform(m, match, line, changed_key)
           end
         end

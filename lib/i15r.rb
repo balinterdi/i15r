@@ -1,4 +1,5 @@
 require 'i15r/pattern_matcher'
+require 'highline/import'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -83,37 +84,44 @@ class I15R
                                   :override_i18n_method => config.override_i18n_method)
     transformed_text = pm.run(text) do |old_line, new_line, key, string|
       @printer.print_diff(old_line, new_line)
-      #@printer.println("Key: #{key}\nString: #{String}")
-      k = edit_change(key, string)
+      key = edit_change(key, string)
       store_key(key, string)
+      key
     end
-    puts keys
     transformed_text + "\n"
   end
 
   def edit_change(key, string)
-    done = false
-    k = key
-    until done do
-      puts("Key: #{k}\nString: #{string}")
-      g = gets
-      case g
-      when /c/
-        # change
-      when /-/
-        k = remove_key_string(k)
-      when /u/
-        k = key
-      else
-        done = true
+    choices = key_prompts(key)
+
+    choose do |menu|
+      menu.index = :number
+      menu.index_suffix = '. '
+      menu.prompt = "Pick a key for string: #{string}"
+      menu.choice "Enter key manually" do
+        key = ask "Enter key:"
       end
+      choices.each do |c|
+        menu.choice c do key = c end
+      end
+
     end
-    k
+    key
   end
 
+  def key_prompts(key)
+    keys = key.split('.')
+    choices = []
+    until keys.length <= 1
+      choices << keys.join('.')
+      keys = remove_unimportant_key(keys)
+    end
+    choices
+  end
+    #
   # remove the second to last key entry
-  def remove_key_string(key)
-    keys = key.split('.').values_at(0..-3, -1).join('.')
+  def remove_unimportant_key(keys)
+    keys.values_at(0..-3, -1)
   end
 
   def store_key(key, string)
