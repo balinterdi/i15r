@@ -135,6 +135,24 @@ results in
 
     <label for="user-name"><%= I18n.t("users.new.name") %></label>
 
+### Interactive key naming
+
+To interactively name the keys, one-by-one, pass the --interactive or -i
+flag.
+
+For example, if a key is going to be named `users.new.name`, you will be
+prompted as follows:
+
+"Name"
+users.new.name:
+1. <Enter key manually>
+2. users.new.name
+3. users.name
+Choose a key
+
+To enter a freeform text key, choose 1. To choose another pre-chosen
+key, choose its number.
+
 ## Design principles & suggested use
 
 I15R takes the 80-20 approach. It focuses on finding most of the text that needs
