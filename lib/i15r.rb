@@ -126,17 +126,25 @@ class I15R
     when String
       # Already exists and is different
       if merge_to != key_array[1]
-        puts "Warning: #{key} already exists. Current:#{merge_to}  Want:#{key_array[1]}"
+        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
       end
     when Hash
       # Already exists as populated has
       if merge_to != {}
-        puts "Warning: #{key} already exists. Current:#{merge_to}  Want:#{key_array[1]}"
+        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
       else
         last_merge_to[last_key] = key_array[1]
       end
     end
+  end
 
+  def color(color, string)
+    c = case color
+        when :red then "\x1b[31m"
+        when :green then "\x1b[32m"
+        when :cyan then "\x1b[36m"
+        end
+    "#{c}#{string}\x1b[0m"
   end
 
   def edit_key(key, string)
