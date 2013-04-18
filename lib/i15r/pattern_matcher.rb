@@ -56,7 +56,7 @@ class I15R
           end
         end
         if block_given? and line != new_line
-          changed_key = yield line, new_line, key, add_quotes(match)
+          changed_key = yield line, new_line, key, strip_quotes(match)
           # retransform, if key changed
           if changed_key != key
             new_line = @transformer.transform(m, match, line, changed_key)
@@ -67,9 +67,8 @@ class I15R
       new_lines.join("\n")
     end
 
-    def add_quotes(string)
-      m = /\A[\'\"]?(.*?)[\'\"]?\Z/.match(string)
-      "\"#{m[1]}\""
+    def strip_quotes(string)
+      /\A[\'\"]?(.*?)[\'\"]?\Z/.match(string)[1]
     end
 
     class Transformer
