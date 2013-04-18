@@ -81,6 +81,9 @@ class I15R
     @printer.println("")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
+    existing_keys = YAML.load(File.open('config/locales/en.yml'))
+    add_keys(keys, existing_keys)
+    File.open('config/locales/en.yml', 'w+') {|f| f.write(YAML::dump(existing_keys)) }
   end
 
   def sub_plain_strings(text, prefix, file_type)
@@ -95,6 +98,45 @@ class I15R
       key # return key at end of block, in case it was changed
     end
     transformed_text + "\n"
+  end
+
+  # Add keys to existing hash of key
+  #  key - array of arrays like ["application.user.print", "Print"]
+  #  existing - hash of existing keys loaded from locale YAML
+  def add_keys(new_keys, existing)
+    new_keys.each do |k|
+      add_key(k, existing)
+    end
+  end
+
+  def add_key(key_array, existing)
+    merge_to = existing
+    last_merge_to = nil
+    last_key = nil
+    key = "en.#{key_array[0]}"
+    # build up the key into existing, if it doesn't exist
+    key.split('.').each do |k|
+      merge_to[k] = {} unless merge_to[k]
+      last_merge_to = merge_to
+      merge_to = merge_to[k]
+      last_key = k
+    end
+
+    case merge_to
+    when String
+      # Already exists and is different
+      if merge_to != key_array[1]
+        puts "Warning: #{key} already exists. Current:#{merge_to}  Want:#{key_array[1]}"
+      end
+    when Hash
+      # Already exists as populated has
+      if merge_to != {}
+        puts "Warning: #{key} already exists. Current:#{merge_to}  Want:#{key_array[1]}"
+      else
+        last_merge_to[last_key] = key_array[1]
+      end
+    end
+
   end
 
   def edit_key(key, string)
