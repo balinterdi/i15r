@@ -49,7 +49,6 @@ describe I15R do
       writer.should_receive(:write)
         .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>\n})
       interface.should_receive(:display).with("Current file: app/views/users/new.html.erb:\n\n")
-      interface.should_receive(:display).with("")
       interface.should_receive(:show_diff)
         .with(%Q{<label for="user-name">Name</label>},
               %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>})

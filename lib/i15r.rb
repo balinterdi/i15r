@@ -33,6 +33,10 @@ class I15R
     def interactive?
       @options.fetch(:interactive, false)
     end
+
+    def locale_merge_path
+      @options.fetch(:merge_with_locale_path, 'config/locales/en.yml')
+    end
   end
 
   attr_reader :config
@@ -81,13 +85,12 @@ class I15R
     @interface.display("Current file: #{path}:\n\n")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
-    existing_keys = ::YAML.load(File.open('config/locales/en.yml'))
-    new_locale_hash = keys.
+    new_locale_keys = keys.
       deep_merge(existing_keys, ->(key, namespaced_key, existing_value, new_value){
         @interface.edit_merge namespaced_key, existing_value, new_value
       }).
       deep_sort(->(key, value){ key.to_s })
-    File.open('config/locales/en.yml', 'w+') {|f| f.write(::YAML::dump(new_locale_hash.to_hash)) }
+    write_to_locale_file new_locale_keys
   end
 
   def sub_plain_strings(text, prefix, file_type)
@@ -112,6 +115,10 @@ class I15R
     @keys ||= KeyStore.new({})
   end
 
+  def existing_keys
+    @existing_keys ||= load_existing_keys
+  end
+
   def internationalize!(path)
     @interface.display "Running in dry-run mode" if config.dry_run?
     path = "app" if path.nil?
@@ -123,4 +130,21 @@ class I15R
     config.prefix_with_path || !config.prefix
   end
 
+  private
+
+  def load_existing_keys
+    if File.exists? @config.locale_merge_path
+      YAML.load(File.open(@config.locale_merge_path))
+    else
+      {}
+    end
+  end
+
+  def write_to_locale_file(new_key_store)
+    if File.exists? @config.locale_merge_path
+      File.open(@config.locale_merge_path, 'w+') do |f|
+        f.write(::YAML::dump(new_key_store.to_hash))
+      end
+    end
+  end
 end
