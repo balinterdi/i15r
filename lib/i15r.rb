@@ -87,7 +87,11 @@ class I15R
     @writer.write(path, i18ned_text) unless config.dry_run?
     new_locale_keys = keys.
       deep_merge(existing_keys, ->(key, namespaced_key, existing_value, new_value){
-        @interface.edit_merge namespaced_key, existing_value, new_value
+        if existing_value == new_value
+          existing_value
+        else
+          @interface.edit_merge namespaced_key, existing_value, new_value
+        end
       }).
       deep_sort(->(key, value){ key.to_s })
     write_to_locale_file new_locale_keys
