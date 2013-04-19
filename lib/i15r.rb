@@ -86,13 +86,7 @@ class I15R
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
     new_locale_keys = keys.
-      deep_merge(existing_keys, ->(key, namespaced_key, existing_value, new_value){
-        if existing_value == new_value
-          existing_value
-        else
-          @interface.edit_merge namespaced_key, existing_value, new_value
-        end
-      }).
+      deep_merge(existing_keys, merge_handler).
       deep_sort(->(key, value){ key.to_s })
     write_to_locale_file new_locale_keys
   end
@@ -135,6 +129,18 @@ class I15R
   end
 
   private
+
+  def merge_handler
+    if @config.interactive?
+      ->(key, namespaced_key, existing_value, new_value){
+        if existing_value == new_value
+          existing_value
+        else
+          @interface.edit_merge namespaced_key, existing_value, new_value
+        end
+      }
+    end
+  end
 
   def load_existing_keys
     if File.exists? @config.locale_merge_path
