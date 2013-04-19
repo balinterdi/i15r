@@ -6,7 +6,7 @@ require 'i15r'
 require 'i15r/version'
 require 'i15r/file_reader'
 require 'i15r/file_writer'
-require 'i15r/console_printer'
+require 'i15r/console'
 require 'optparse'
 
 def parse_options(args)
@@ -51,6 +51,6 @@ end
 
 @i15r = I15R.new(I15R::FileReader.new,
                  I15R::FileWriter.new,
-                 I15R::ConsolePrinter.new,
+                 I15R::Console.new,
                  parse_options(ARGV))
 @i15r.internationalize!(ARGV[-1])

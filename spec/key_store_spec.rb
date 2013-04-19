@@ -25,7 +25,7 @@ describe KeyStore do
       end
 
       it "delegates resolution to a proc if provided" do
-        conflict_proc = ->(key, original_value, merge_value){ original_value }
+        conflict_proc = ->(key, namespaced_key, original_value, merge_value){ original_value }
         key_store.deep_merge(merge_hash, conflict_proc).should == original
       end
     end
