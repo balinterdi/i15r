@@ -80,11 +80,11 @@ class I15R
   end
 
   def internationalize_file(path)
-    text = @reader.read(path)
+    text = reader.read(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
     @interface.display("Current file: #{path}:\n\n")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
-    @writer.write(path, i18ned_text) unless config.dry_run?
+    writer.write(path, i18ned_text) unless config.dry_run?
     new_locale_keys = keys.
       deep_merge(existing_keys, merge_handler).
       deep_sort(->(key, value){ key.to_s })
@@ -130,8 +130,10 @@ class I15R
 
   private
 
+  attr_reader :reader, :writer, :interface, :config
+
   def merge_handler
-    if @config.interactive?
+    if config.interactive?
       ->(key, namespaced_key, existing_value, new_value){
         if existing_value == new_value
           existing_value
@@ -143,16 +145,16 @@ class I15R
   end
 
   def load_existing_keys
-    if File.exists? @config.locale_merge_path
-      YAML.load(File.open(@config.locale_merge_path))
+    if File.exists? config.locale_merge_path
+      YAML.load(File.open(config.locale_merge_path))
     else
       {}
     end
   end
 
   def write_to_locale_file(new_key_store)
-    if File.exists? @config.locale_merge_path
-      File.open(@config.locale_merge_path, 'w+') do |f|
+    if File.exists? config.locale_merge_path
+      File.open(config.locale_merge_path, 'w+') do |f|
         f.write(::YAML::dump(new_key_store.to_hash))
       end
     end
