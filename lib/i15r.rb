@@ -85,24 +85,22 @@ class I15R
     @writer.write(path, i18ned_text) unless config.dry_run?
     existing_keys = ::YAML.load(File.open('config/locales/en.yml'))
     new_locale_hash = keys.
-      deep_merge(existing_keys, ->(k, e, n){ get_user_input k, e, n }).
+      deep_merge(existing_keys, ->(k, e, n){ edit_merge k, e, n }).
       deep_sort(->(key, value){ key.to_s })
     File.open('config/locales/en.yml', 'w+') {|f| f.write(::YAML::dump(new_locale_hash.to_hash)) }
   end
 
-  def get_user_input(key, hash_val, merge_hash_val)
-    print <<-EOF
+  def edit_merge(key, hash_val, merge_hash_val)
+    say <<-EOF
 
 Merge options for #{color :cyan, key}:
-#{color :red, "(m)Original file: #{hash_val}"}
-#{color :green, "(i)New input: #{merge_hash_val}"}
+#{color :red, "(1)Original file: #{merge_hash_val}"}
+#{color :green, "(2)New input: #{hash_val}"}
 EOF
-    print "Please choose or enter a new value:(m) "
-    selection = STDIN.gets.chomp
-    selection = 'm' if selection.empty?
+    selection = ask("Please choose or enter a new value") do |q| q.default = '1' end
     case selection
-    when 'm' then merge_hash_val
-    when 'i' then hash_val
+    when '1' then merge_hash_val
+    when '2' then hash_val
     else selection
     end
   end
@@ -131,22 +129,19 @@ EOF
   end
 
   def edit_key(key, string)
+    say "\n\nKey options for #{color :cyan, key}"
+    say "with value: #{color :green, string}"
     choices = key_prompts(key)
-
-    choose do |menu|
-      menu.index = :number
-      menu.index_suffix = '. '
-      menu.header = "\n\n\n#{string}\n#{key}"
-      menu.prompt = "Choose a key"
-      menu.choice "<Enter key manually>" do
-        key = ask "Enter key:"
-      end
-      choices.each do |c|
-        menu.choice c do key = c end
-      end
-
+    choices.each_with_index do |p, i|
+      say "(#{i + 1}) #{p}"
     end
-    key
+    selection = ask("Please choose a key or enter one manually") do |q| q.default = '1' end
+
+    if (1..choices.size).include? selection.to_i
+      choices[selection.to_i - 1]
+    else
+      selection
+    end
   end
 
   # array of prompts, leaving the first and last item intact
