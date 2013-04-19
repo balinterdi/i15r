@@ -1,5 +1,7 @@
 require 'i15r/pattern_matcher'
 require 'highline/import'
+require 'i15r/key_store'
+require 'yaml'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -81,9 +83,28 @@ class I15R
     @printer.println("")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
     @writer.write(path, i18ned_text) unless config.dry_run?
-    existing_keys = YAML.load(File.open('config/locales/en.yml'))
-    add_keys(keys, existing_keys)
-    File.open('config/locales/en.yml', 'w+') {|f| f.write(YAML::dump(existing_keys)) }
+    existing_keys = ::YAML.load(File.open('config/locales/en.yml'))
+    new_locale_hash = keys.
+      deep_merge(existing_keys, ->(k, e, n){ get_user_input k, e, n }).
+      deep_sort(->(key, value){ key.to_s })
+    File.open('config/locales/en.yml', 'w+') {|f| f.write(::YAML::dump(new_locale_hash.to_hash)) }
+  end
+
+  def get_user_input(key, hash_val, merge_hash_val)
+    print <<-EOF
+
+Merge options for #{color :cyan, key}:
+#{color :red, "(m)Original file: #{hash_val}"}
+#{color :green, "(i)New input: #{merge_hash_val}"}
+EOF
+    print "Please choose or enter a new value:(m) "
+    selection = STDIN.gets.chomp
+    selection = 'm' if selection.empty?
+    case selection
+    when 'm' then merge_hash_val
+    when 'i' then hash_val
+    else selection
+    end
   end
 
   def sub_plain_strings(text, prefix, file_type)
@@ -98,44 +119,6 @@ class I15R
       key # return key at end of block, in case it was changed
     end
     transformed_text + "\n"
-  end
-
-  # Add keys to existing hash of key
-  #  key - array of arrays like ["application.user.print", "Print"]
-  #  existing - hash of existing keys loaded from locale YAML
-  def add_keys(new_keys, existing)
-    new_keys.each do |k|
-      add_key(k, existing)
-    end
-  end
-
-  def add_key(key_array, existing)
-    merge_to = existing
-    last_merge_to = nil
-    last_key = nil
-    key = "en.#{key_array[0]}"
-    # build up the key into existing, if it doesn't exist
-    key.split('.').each do |k|
-      merge_to[k] = {} unless merge_to[k]
-      last_merge_to = merge_to
-      merge_to = merge_to[k]
-      last_key = k
-    end
-
-    case merge_to
-    when String
-      # Already exists and is different
-      if merge_to != key_array[1]
-        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
-      end
-    when Hash
-      # Already exists as populated has
-      if merge_to != {}
-        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
-      else
-        last_merge_to[last_key] = key_array[1]
-      end
-    end
   end
 
   def color(color, string)
@@ -178,11 +161,11 @@ class I15R
   end
 
   def store_key(key, string)
-    keys << [key, string]
+    keys.add_key ['en'] + key.split(/\./), string
   end
 
   def keys
-    @keys ||= []
+    @keys ||= KeyStore.new({})
   end
 
   def internationalize!(path)
