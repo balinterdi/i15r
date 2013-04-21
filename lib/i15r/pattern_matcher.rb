@@ -29,7 +29,7 @@ class I15R
       @prefix = prefix
       @file_type = file_type
       transformer_class = self.class.const_get("#{file_type.to_s.capitalize}Transformer")
-      @transformer = transformer_class.new(options[:add_default])
+      @transformer = transformer_class.new(options[:add_default], options[:override_i18n_method] || 'I18n.t')
     end
 
     def translation_key(text)
@@ -61,8 +61,9 @@ class I15R
     end
 
     class Transformer
-      def initialize(add_default)
+      def initialize(add_default, i18n_method)
         @add_default = add_default
+        @i18n_method = i18n_method
       end
 
       private
@@ -74,9 +75,9 @@ class I15R
             unless original[0] == "'" or original[0] == '"'
               original = %("#{original}")
             end
-            %(I18n.t("#{key}", :default => #{original}))
+            %(#{@i18n_method}("#{key}", :default => #{original}))
           else
-            %(I18n.t("#{key}"))
+            %(#{@i18n_method}("#{key}"))
           end
         end
     end
