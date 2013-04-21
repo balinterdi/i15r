@@ -6,7 +6,7 @@ require 'i15r'
 require 'i15r/version'
 require 'i15r/file_reader'
 require 'i15r/file_writer'
-require 'i15r/console_printer'
+require 'i15r/console'
 require 'optparse'
 
 def parse_options(args)
@@ -33,6 +33,9 @@ def parse_options(args)
     opts.on("-i", "--interactive", "Interactively prompt for string changes") do |m|
       options[:interactive] = true
     end
+    opts.on("--locale_merge_path", "Locale file to merge and write new translation keys") do |path|
+      options[:locale_merge_path] = path unless path.to_s.empty?
+    end
 
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
@@ -51,6 +54,6 @@ end
 
 @i15r = I15R.new(I15R::FileReader.new,
                  I15R::FileWriter.new,
-                 I15R::ConsolePrinter.new,
+                 I15R::Console.new,
                  parse_options(ARGV))
 @i15r.internationalize!(ARGV[-1])

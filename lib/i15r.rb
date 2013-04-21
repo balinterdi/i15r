@@ -1,5 +1,6 @@
 require 'i15r/pattern_matcher'
-require 'highline/import'
+require 'i15r/key_store'
+require 'yaml'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -32,14 +33,18 @@ class I15R
     def interactive?
       @options.fetch(:interactive, false)
     end
+
+    def locale_merge_path
+      @options.fetch(:merge_with_locale_path, 'config/locales/en.yml')
+    end
   end
 
   attr_reader :config
 
-  def initialize(reader, writer, printer, config={})
+  def initialize(reader, writer, interface, config={})
     @reader = reader
     @writer = writer
-    @printer = printer
+    @interface = interface
     @config = I15R::Config.new(config)
   end
 
@@ -75,24 +80,24 @@ class I15R
   end
 
   def internationalize_file(path)
-    text = @reader.read(path)
+    text = reader.read(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
-    @printer.println("#{path}:")
-    @printer.println("")
+    @interface.display("Current file: #{path}:\n\n")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
-    @writer.write(path, i18ned_text) unless config.dry_run?
-    existing_keys = YAML.load(File.open('config/locales/en.yml'))
-    add_keys(keys, existing_keys)
-    File.open('config/locales/en.yml', 'w+') {|f| f.write(YAML::dump(existing_keys)) }
+    writer.write(path, i18ned_text) unless config.dry_run?
+    new_locale_keys = keys.
+      deep_merge(existing_keys, merge_handler).
+      deep_sort(->(key, value){ key.to_s })
+    write_to_locale_file new_locale_keys
   end
 
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
     transformed_text = pm.run(text) do |old_line, new_line, key, string|
-      @printer.print_diff(old_line, new_line)
+      @interface.show_diff(old_line, new_line)
       if config.interactive?
-        key = edit_key(key, string)
+        key = @interface.edit_key(key, string)
       end
       store_key(key, string)
       key # return key at end of block, in case it was changed
@@ -100,93 +105,20 @@ class I15R
     transformed_text + "\n"
   end
 
-  # Add keys to existing hash of key
-  #  key - array of arrays like ["application.user.print", "Print"]
-  #  existing - hash of existing keys loaded from locale YAML
-  def add_keys(new_keys, existing)
-    new_keys.each do |k|
-      add_key(k, existing)
-    end
-  end
-
-  def add_key(key_array, existing)
-    merge_to = existing
-    last_merge_to = nil
-    last_key = nil
-    key = "en.#{key_array[0]}"
-    # build up the key into existing, if it doesn't exist
-    key.split('.').each do |k|
-      merge_to[k] = {} unless merge_to[k]
-      last_merge_to = merge_to
-      merge_to = merge_to[k]
-      last_key = k
-    end
-
-    case merge_to
-    when String
-      # Already exists and is different
-      if merge_to != key_array[1]
-        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
-      end
-    when Hash
-      # Already exists as populated has
-      if merge_to != {}
-        puts "#{color(:red, "Warning: #{key} already exists.")} Current:#{merge_to}  Want:#{key_array[1]}"
-      else
-        last_merge_to[last_key] = key_array[1]
-      end
-    end
-  end
-
-  def color(color, string)
-    c = case color
-        when :red then "\x1b[31m"
-        when :green then "\x1b[32m"
-        when :cyan then "\x1b[36m"
-        end
-    "#{c}#{string}\x1b[0m"
-  end
-
-  def edit_key(key, string)
-    choices = key_prompts(key)
-
-    choose do |menu|
-      menu.index = :number
-      menu.index_suffix = '. '
-      menu.header = "\n\n\n#{string}\n#{key}"
-      menu.prompt = "Choose a key"
-      menu.choice "<Enter key manually>" do
-        key = ask "Enter key:"
-      end
-      choices.each do |c|
-        menu.choice c do key = c end
-      end
-
-    end
-    key
-  end
-
-  # array of prompts, leaving the first and last item intact
-  def key_prompts(key)
-    keylist = key.split('.')
-    choices = []
-    until keylist.length <= 1
-      choices << keylist.join('.')
-      keylist.delete_at(-2)
-    end
-    choices
-  end
-
   def store_key(key, string)
-    keys << [key, string]
+    keys.add_key ['en'] + key.split(/\./), string
   end
 
   def keys
-    @keys ||= []
+    @keys ||= KeyStore.new({})
+  end
+
+  def existing_keys
+    @existing_keys ||= load_existing_keys
   end
 
   def internationalize!(path)
-    @printer.println "Running in dry-run mode" if config.dry_run?
+    @interface.display "Running in dry-run mode" if config.dry_run?
     path = "app" if path.nil?
     files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
     files.each { |file| internationalize_file(file) }
@@ -196,4 +128,35 @@ class I15R
     config.prefix_with_path || !config.prefix
   end
 
+  private
+
+  attr_reader :reader, :writer, :interface, :config
+
+  def merge_handler
+    if config.interactive?
+      ->(key, namespaced_key, existing_value, new_value){
+        if existing_value == new_value
+          existing_value
+        else
+          @interface.edit_merge namespaced_key, existing_value, new_value
+        end
+      }
+    end
+  end
+
+  def load_existing_keys
+    if File.exists? config.locale_merge_path
+      YAML.load(File.open(config.locale_merge_path))
+    else
+      {}
+    end
+  end
+
+  def write_to_locale_file(new_key_store)
+    if File.exists? config.locale_merge_path
+      File.open(config.locale_merge_path, 'w+') do |f|
+        f.write(::YAML::dump(new_key_store.to_hash))
+      end
+    end
+  end
 end

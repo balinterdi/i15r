@@ -41,16 +41,15 @@ describe I15R do
     let(:path) { "app/views/users/new.html.erb" }
     let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
     let(:writer) { mock("writer") }
-    let(:printer) { mock("printer") }
+    let(:interface) { mock("interface") }
 
-    subject { I15R.new(reader, writer, printer) }
+    subject { I15R.new(reader, writer, interface) }
 
     specify do
       writer.should_receive(:write)
         .with(path, %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>\n})
-      printer.should_receive(:println).with("app/views/users/new.html.erb:")
-      printer.should_receive(:println).with("")
-      printer.should_receive(:print_diff)
+      interface.should_receive(:display).with("Current file: app/views/users/new.html.erb:\n\n")
+      interface.should_receive(:show_diff)
         .with(%Q{<label for="user-name">Name</label>},
               %Q{<label for="user-name"><%= I18n.t("users.new.name", :default => "Name") %></label>})
       subject.internationalize_file(path)
