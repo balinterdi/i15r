@@ -135,6 +135,33 @@ results in
 
     <label for="user-name"><%= I18n.t("users.new.name") %></label>
 
+### Interactive key naming and merging
+
+To interactively name the keys, one-by-one, pass the --interactive or -i
+flag.
+
+For example, if a key is going to be named `users.new.name`, you will be
+prompted as follows:
+ 
+Key options for users.new.name
+with value: Name
+(1) users.new.name
+(2) users.name
+Please choose a key or enter one manually  |1|
+
+To enter a freeform text key just enter it here. To choose another pre-chosen
+key, choose its number.  The value defaults to (1).
+
+### Locale file creation/merge
+
+The locale file is assumed by default to be `config/locales/en.yml`.  To
+choose another file you must pass the `--locale_merge_path` flag along
+with a file path.
+
+This files contents will be merged with the newly generated keys and
+written in place.  The merge process will be interactive if there are
+conflicts and the `--interactive` flag has been passed.
+
 ## Design principles & suggested use
 
 I15R takes the 80-20 approach. It focuses on finding most of the text that needs

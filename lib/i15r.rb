@@ -1,4 +1,6 @@
 require 'i15r/pattern_matcher'
+require 'i15r/key_store'
+require 'yaml'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -27,14 +29,22 @@ class I15R
     def override_i18n_method
       @options.fetch(:override_i18n_method, nil)
     end
+
+    def interactive?
+      @options.fetch(:interactive, false)
+    end
+
+    def locale_merge_path
+      @options.fetch(:merge_with_locale_path, 'config/locales/en.yml')
+    end
   end
 
   attr_reader :config
 
-  def initialize(reader, writer, printer, config={})
+  def initialize(reader, writer, interface, config={})
     @reader = reader
     @writer = writer
-    @printer = printer
+    @interface = interface
     @config = I15R::Config.new(config)
   end
 
@@ -70,25 +80,45 @@ class I15R
   end
 
   def internationalize_file(path)
-    text = @reader.read(path)
+    text = reader.read(path)
     template_type = path[/(?:.*)\.(.*)$/, 1]
-    @printer.println("#{path}:")
-    @printer.println("")
+    @interface.display("Current file: #{path}:\n\n")
     i18ned_text = sub_plain_strings(text, full_prefix(path), template_type.to_sym)
-    @writer.write(path, i18ned_text) unless config.dry_run?
+    writer.write(path, i18ned_text) unless config.dry_run?
+    new_locale_keys = keys.
+      deep_merge(existing_keys, merge_handler).
+      deep_sort(->(key, value){ key.to_s })
+    write_to_locale_file new_locale_keys
   end
 
   def sub_plain_strings(text, prefix, file_type)
     pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
-    transformed_text = pm.run(text) do |old_line, new_line|
-      @printer.print_diff(old_line, new_line)
+    transformed_text = pm.run(text) do |old_line, new_line, key, string|
+      @interface.show_diff(old_line, new_line)
+      if config.interactive?
+        key = @interface.edit_key(key, string)
+      end
+      store_key(key, string)
+      key # return key at end of block, in case it was changed
     end
     transformed_text + "\n"
   end
 
+  def store_key(key, string)
+    keys.add_key ['en'] + key.split(/\./), string
+  end
+
+  def keys
+    @keys ||= KeyStore.new({})
+  end
+
+  def existing_keys
+    @existing_keys ||= load_existing_keys
+  end
+
   def internationalize!(path)
-    @printer.println "Running in dry-run mode" if config.dry_run?
+    @interface.display "Running in dry-run mode" if config.dry_run?
     path = "app" if path.nil?
     files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
     files.each { |file| internationalize_file(file) }
@@ -98,4 +128,35 @@ class I15R
     config.prefix_with_path || !config.prefix
   end
 
+  private
+
+  attr_reader :reader, :writer, :interface, :config
+
+  def merge_handler
+    if config.interactive?
+      ->(key, namespaced_key, existing_value, new_value){
+        if existing_value == new_value
+          existing_value
+        else
+          @interface.edit_merge namespaced_key, existing_value, new_value
+        end
+      }
+    end
+  end
+
+  def load_existing_keys
+    if File.exists? config.locale_merge_path
+      YAML.load(File.open(config.locale_merge_path))
+    else
+      {}
+    end
+  end
+
+  def write_to_locale_file(new_key_store)
+    if File.exists? config.locale_merge_path
+      File.open(config.locale_merge_path, 'w+') do |f|
+        f.write(::YAML::dump(new_key_store.to_hash))
+      end
+    end
+  end
 end

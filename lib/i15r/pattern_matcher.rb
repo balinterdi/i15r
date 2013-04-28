@@ -43,21 +43,32 @@ class I15R
       lines = text.split("\n")
       new_lines = lines.map do |line|
         new_line = line
+        m, key, match, string = nil
         PATTERNS[@file_type].detect do |pattern|
           if m = pattern.match(line)
             m.names.each do |group_name|
               if /\w/.match(m[group_name])
-                new_line = @transformer.transform(m, m[group_name], line, translation_key(m[group_name]))
+                match = m[group_name]
+                key = translation_key(match)
+                new_line = @transformer.transform(m, match, line, key)
               end
             end
           end
         end
         if block_given? and line != new_line
-          yield line, new_line
+          changed_key = yield line, new_line, key, strip_quotes(match)
+          # retransform, if key changed
+          if changed_key != key
+            new_line = @transformer.transform(m, match, line, changed_key)
+          end
         end
         new_line
       end
       new_lines.join("\n")
+    end
+
+    def strip_quotes(string)
+      /\A[\'\"]?(.*?)[\'\"]?\Z/.match(string)[1]
     end
 
     class Transformer
