@@ -16,6 +16,8 @@ describe I15R::PatternMatcher do
     describe "in tag content" do
       it { should internationalize('<h1>New flight</h1>')
                                .to('<h1><%= I18n.t("users.new.new_flight") %></h1>') }
+      it { should internationalize('<h1>Don\'t worry</h1>')
+                               .to('<h1><%= I18n.t("users.new.dont_worry") %></h1>') }
       it { should internationalize(%(<label for="user-name">Name</label>))
                                .to(%(<label for="user-name"><%= I18n.t("users.new.name") %></label>)) }
 
