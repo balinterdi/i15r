@@ -68,6 +68,20 @@ describe I15R::PatternMatcher do
         it { should internationalize(%( <%= hello_world %> )).to_the_same }
         it { should internationalize(%( <h1><%= hello_world %></h1> )).to_the_same }
       end
+
+      describe "when a line contains Ruby method calls with options" do
+        it { should internationalize(%( <%= hello_world(:option => true) %> )).to_the_same }
+        it { should internationalize(%( <%= hello_world(option: true) %> )).to_the_same }
+        it { should internationalize(%( <h1><%= hello_world(:option => true) %></h1> )).to_the_same }
+        it { should internationalize(%( <h1><%= hello_world(option: true) %></h1> )).to_the_same }
+      end
+
+      describe "when a line contains a form method calls with options" do
+        it { should internationalize(%( <%= f.email_field :email, :option => true %> )).to_the_same }
+        it { should internationalize(%( <%= f.email_field :email, option: true %> )).to_the_same }
+        it { should internationalize(%( <h1><%= f.email_field :email, :option => true %></h1> )).to_the_same }
+        it { should internationalize(%( <h1><%= f.email_field :email, option: true %></h1> )).to_the_same }
+      end
     end
 
     describe "in tag attributes" do
