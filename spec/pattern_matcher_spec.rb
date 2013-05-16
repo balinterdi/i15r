@@ -181,6 +181,7 @@ describe I15R::PatternMatcher do
                              .to(%(%p= I18n.t("users.show.do_not_close_reload_while_loading"))) }
     it { should internationalize(%(        .field)).to(%(        .field)) }
     it { should internationalize('%p').to_the_same }
+    it { pending "broken"; should internationalize('%p #{variable}').to_the_same }
     it { should internationalize(%(%h2 Resend unlock instructions))
                              .to(%(%h2= I18n.t("users.show.resend_unlock_instructions"))) }
     it { should internationalize(%(%i (we need your password to confirm your changes)))
