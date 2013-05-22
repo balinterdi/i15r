@@ -11,6 +11,7 @@ describe I15R::PatternMatcher do
 
     describe "no-markup content" do
       it { should internationalize("please visit").to('<%= I18n.t("users.new.please_visit") %>') }
+      it { should internationalize("12").to_the_same }
     end
 
     describe "in tag content" do
