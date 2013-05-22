@@ -16,6 +16,8 @@ describe I15R::PatternMatcher do
     describe "in tag content" do
       it { should internationalize('<h1>New flight</h1>')
                                .to('<h1><%= I18n.t("users.new.new_flight") %></h1>') }
+      it { should internationalize('<h1>Don\'t worry</h1>')
+                               .to('<h1><%= I18n.t("users.new.dont_worry") %></h1>') }
       it { should internationalize(%(<label for="user-name">Name</label>))
                                .to(%(<label for="user-name"><%= I18n.t("users.new.name") %></label>)) }
 
@@ -62,6 +64,25 @@ describe I15R::PatternMatcher do
       describe "when a line is already international" do
         it { should internationalize(%(  <%= f.label I18n.t("users.new.name") %>)).to_the_same }
         it { should internationalize(%(  <%= f.label t("users.new.name") %>)).to_the_same }
+      end
+
+      describe "when a line contains Ruby variables only" do
+        it { should internationalize(%( <%= hello_world %> )).to_the_same }
+        it { should internationalize(%( <h1><%= hello_world %></h1> )).to_the_same }
+      end
+
+      describe "when a line contains Ruby method calls with options" do
+        it { should internationalize(%( <%= hello_world(:option => true) %> )).to_the_same }
+        it { should internationalize(%( <%= hello_world(option: true) %> )).to_the_same }
+        it { should internationalize(%( <h1><%= hello_world(:option => true) %></h1> )).to_the_same }
+        it { should internationalize(%( <h1><%= hello_world(option: true) %></h1> )).to_the_same }
+      end
+
+      describe "when a line contains a form method calls with options" do
+        it { should internationalize(%( <%= f.email_field :email, :option => true %> )).to_the_same }
+        it { should internationalize(%( <%= f.email_field :email, option: true %> )).to_the_same }
+        it { should internationalize(%( <h1><%= f.email_field :email, :option => true %></h1> )).to_the_same }
+        it { should internationalize(%( <h1><%= f.email_field :email, option: true %></h1> )).to_the_same }
       end
     end
 
@@ -154,12 +175,14 @@ describe I15R::PatternMatcher do
                              .to(%(%p= I18n.t("users.show.please_check_your_inbox_and_click_on_the_activation_link"))) }
 
     it { should internationalize("please visit").to('= I18n.t("users.show.please_visit")') }
+    it { pending "broken"; should internationalize("apples &amp; oranges").to('= I18n.t("users.show.apples_oranges")') }
     it { should internationalize("Mañana").to('= I18n.t("users.show.mañana")') }
     it { should internationalize("C'est ça").to('= I18n.t("users.show.cest_ça")') }
     it { should internationalize(%(%p Do not close/reload while loading))
                              .to(%(%p= I18n.t("users.show.do_not_close_reload_while_loading"))) }
     it { should internationalize(%(        .field)).to(%(        .field)) }
     it { should internationalize('%p').to_the_same }
+    it { pending "broken"; should internationalize('%p #{variable}').to_the_same }
     it { should internationalize(%(%h2 Resend unlock instructions))
                              .to(%(%h2= I18n.t("users.show.resend_unlock_instructions"))) }
     it { should internationalize(%(%i (we need your password to confirm your changes)))
