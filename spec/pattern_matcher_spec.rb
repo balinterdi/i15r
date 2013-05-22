@@ -11,6 +11,8 @@ describe I15R::PatternMatcher do
 
     describe "no-markup content" do
       it { should internationalize("please visit").to('<%= I18n.t("users.new.please_visit") %>') }
+      it { should internationalize("12").to_the_same }
+      it { should internationalize("12 Monkeys").to('<%= I18n.t("users.new.12_monkeys") %>') }
     end
 
     describe "in tag content" do
@@ -165,6 +167,12 @@ describe I15R::PatternMatcher do
 
   describe "in haml templates" do
     let(:pattern_matcher) { I15R::PatternMatcher.new("users.show", :haml) }
+
+    describe "no-markup content" do
+      it { should internationalize("please visit").to('= I18n.t("users.show.please_visit")') }
+      it { should internationalize("12").to_the_same }
+      it { should internationalize("12 Monkeys").to('= I18n.t("users.show.12_monkeys")') }
+    end
 
     it { should internationalize('#main').to_the_same }
 

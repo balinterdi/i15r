@@ -43,11 +43,15 @@ class I15R
       lines = text.split("\n")
       new_lines = lines.map do |line|
         new_line = line
-        PATTERNS[@file_type].detect do |pattern|
-          if m = pattern.match(line)
-            m.names.each do |group_name|
-              if /\w/.match(m[group_name])
-                new_line = @transformer.transform(m, m[group_name], line, translation_key(m[group_name]))
+        if line !~ /[[:alpha:]]/
+          new_line
+        else
+          PATTERNS[@file_type].detect do |pattern|
+            if m = pattern.match(line)
+              m.names.each do |group_name|
+                if /\w/.match(m[group_name])
+                  new_line = @transformer.transform(m, m[group_name], line, translation_key(m[group_name]))
+                end
               end
             end
           end
