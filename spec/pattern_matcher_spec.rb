@@ -80,6 +80,37 @@ describe I15R::PatternMatcher do
         it { should internationalize(%( <h1><%= hello_world(option: true) %></h1> )).to_the_same }
       end
 
+      describe "when a line contains Ruby code" do
+        it { should internationalize("variable = value").to_the_same }
+        it { should internationalize("if something do").to_the_same }
+        it { should internationalize("unless something do").to_the_same }
+        it { should internationalize("end").to_the_same }
+        it { should internationalize("something %>").to_the_same }
+        it { should internationalize("key: value,").to_the_same }
+        it { should internationalize("key => value").to_the_same }
+
+        it { should internationalize("some string,").to('<%= I18n.t("users.new.some_string") %>') }
+        it { should internationalize("some string;").to('<%= I18n.t("users.new.some_string") %>') }
+        it { should internationalize("things i do").to('<%= I18n.t("users.new.things_i_do") %>') }
+        it { should internationalize("if you can").to('<%= I18n.t("users.new.if_you_can") %>') }
+      end
+
+      describe "when a line contains Javascript code" do
+        it { should internationalize("var variable").to_the_same }
+        it { should internationalize("something and braces {").to_the_same }
+        it { should internationalize("return and semicolon;").to_the_same }
+      end
+
+      describe "when a line contains CSS code" do
+        it { should internationalize("overflow: auto;").to_the_same }
+      end
+
+      describe "when a line contains HTML entities" do
+        it { should internationalize("&nbsp;").to_the_same }
+        it { should internationalize("<h1>&nbsp;</h1>").to_the_same }
+        it { should internationalize('<%= link_to "&nbsp; >".html_safe, next_page_path %>').to_the_same }
+      end
+
       describe "when a line contains a form method calls with options" do
         it { should internationalize(%( <%= f.email_field :email, :option => true %> )).to_the_same }
         it { should internationalize(%( <%= f.email_field :email, option: true %> )).to_the_same }
