@@ -82,12 +82,12 @@ describe I15R::PatternMatcher do
 
       describe "when a line contains Ruby code" do
         it { should internationalize("variable = value").to_the_same }
-        it { should internationalize("if something do").to_the_same }
-        it { should internationalize("unless something do").to_the_same }
+        it { should internationalize("if something").to_the_same }
+        it { should internationalize("unless something").to_the_same }
         it { should internationalize("end").to_the_same }
         it { should internationalize("something %>").to_the_same }
         it { should internationalize("key: value,").to_the_same }
-        it { should internationalize("key => value").to_the_same }
+        it { should internationalize(":key => value").to_the_same }
 
         it { should internationalize("some string,").to('<%= I18n.t("users.new.some_string") %>') }
         it { should internationalize("some string;").to('<%= I18n.t("users.new.some_string") %>') }
@@ -97,8 +97,9 @@ describe I15R::PatternMatcher do
 
       describe "when a line contains Javascript code" do
         it { should internationalize("var variable").to_the_same }
-        it { should internationalize("something and braces {").to_the_same }
-        it { should internationalize("return and semicolon;").to_the_same }
+        it { should internationalize("if (interesting) {").to_the_same }
+        it { should internationalize("if (!interesting) {").to_the_same }
+        it { should internationalize("return result;").to_the_same }
       end
 
       describe "when a line contains CSS code" do
