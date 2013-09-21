@@ -11,7 +11,7 @@ class I15R
         />(?<tag-content>(?!&.*;)[[:space:][:alnum:][:punct:]]+?)<\//,
         /<a\s+title=['"](?<link-title>.+?)['"]/,
         /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
-        /^(?!^var .*)(?!.*(%>|{|})$)(?!.*(:|=).*(;|,)$)(?!.*return .*;$)(?!.*=)(?!^(if|unless|begin) .* do$)(?!^.*end$)\s*(?<no-markup-content>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*)/
+        /^(?!^var .*)(?!.*(%>|{|})$)(?!.*(:|=).*(;|,)$)(?!.*return .*;$)(?!.*=)(?!^(if |unless ).*(\=|\&|\|))(?!^(if |unless )\S+$)(?!^end$)(?!.*do.*\|$)\s*(?<no-markup-content>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*)/
       ],
       :haml => [
         /=.*link_to\s+(?<title>['"].+?['"]),/,

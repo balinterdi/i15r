@@ -83,7 +83,14 @@ describe I15R::PatternMatcher do
       describe "when a line contains Ruby code" do
         it { should internationalize("variable = value").to_the_same }
         it { should internationalize("if something").to_the_same }
+        it { should internationalize("if some == value").to_the_same }
+        it { should internationalize("if some && value").to_the_same }
+        it { should internationalize("if some || value").to_the_same }
         it { should internationalize("unless something").to_the_same }
+        it { should internationalize("unless some == value").to_the_same }
+        it { should internationalize("unless some && value").to_the_same }
+        it { should internationalize("unless some || value").to_the_same }
+        it { should internationalize("something do |val|").to_the_same }
         it { should internationalize("end").to_the_same }
         it { should internationalize("something %>").to_the_same }
         it { should internationalize("key: value,").to_the_same }
