@@ -39,9 +39,9 @@ describe I15R do
 
   describe "writing the changed file" do
     let(:path) { "app/views/users/new.html.erb" }
-    let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
-    let(:writer) { mock("writer") }
-    let(:printer) { mock("printer") }
+    let(:reader) { double(:read => %Q{<label for="user-name">Name</label>}) }
+    let(:writer) { double("writer") }
+    let(:printer) { double("printer") }
 
     subject { I15R.new(reader, writer, printer) }
 
@@ -59,8 +59,8 @@ describe I15R do
 
 
   describe "generating the prefix" do
-    let(:reader) { mock(:read => %Q{<label for="user-name">Name</label>}) }
-    let(:writer) { mock("writer") }
+    let(:reader) { double(:read => %Q{<label for="user-name">Name</label>}) }
+    let(:writer) { double("writer") }
 
     subject { I15R.new(reader, writer, I15R::NullPrinter.new) }
 
@@ -107,7 +107,7 @@ describe I15R do
 
   describe "the add_default option" do
     let(:path) { "app/users/views/index.html.haml" }
-    let(:patter_matcher) { mock("pattern matcher", :run => "") }
+    let(:patter_matcher) { double("pattern matcher", :run => "") }
     let(:i15r) { I15R::Fixture.new }
 
     subject { I15R::Fixture.new }
