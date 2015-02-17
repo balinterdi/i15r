@@ -133,6 +133,9 @@ describe I15R::PatternMatcher do
       
       it { should internationalize(%(<button title="action button"><img src="button.png" /></button>))
                                .to(%(<button title="<%= I18n.t("users.new.action_button") %>"><img src="button.png" /></button>)) }
+      
+      it { should internationalize(%(<img src="image.jpg" alt="Beautiful image" />))
+                               .to(%(<img src="image.jpg" alt="<%= I18n.t("users.new.beautiful_image") %>" />)) }
     end
 
     describe "Rails helper methods" do
