@@ -9,7 +9,8 @@ class I15R
         /<%=.*label(_tag)?.*?,\s*(?<label-title>(['"].+?['"]|:[[:alnum:]_]+))/,
         /<%=.*submit(_tag)?\s+(?<submit-text>(['"].+?['"]|:[[:alnum:]_]+))/,
         />(?<tag-content>(?!&.*;)[[:space:][:alnum:][:punct:]]+?)<\//,
-        /<a\s+title=['"](?<link-title>.+?)['"]/,
+        /\s+title=['"](?<link-title>.+?)['"]/,
+        /\s+alt=['"](?<img-alt>.+?)['"]/,
         /^\s*(?<pre-tag-text>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*?)</,
         /^(?!^var .*)(?!.*(%>|{|})$)(?!.*(:|=).*(;|,)$)(?!.*return .*;$)(?!.*=)(?!^(if |unless ).*(\=|\&|\|))(?!^(if |unless )\S+$)(?!^end$)(?!.*do.*\|$)\s*(?<no-markup-content>[[:alnum:]]+[[:alnum:][:space:][:punct:]]*)/
       ],
