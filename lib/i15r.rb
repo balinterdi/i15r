@@ -1,4 +1,5 @@
 require 'i15r/pattern_matcher'
+require 'i15r/locale_creator'
 
 class I15R
   class AppFolderNotFound < Exception; end
@@ -35,6 +36,7 @@ class I15R
     @reader = reader
     @writer = writer
     @printer = printer
+    @locale_creator = I15R::LocaleCreator.new(config[:create_locale_file])
     @config = I15R::Config.new(config)
   end
 
@@ -79,7 +81,10 @@ class I15R
   end
 
   def sub_plain_strings(text, prefix, file_type)
-    pm = I15R::PatternMatcher.new(prefix, file_type, :add_default => config.add_default,
+    pm = I15R::PatternMatcher.new(prefix,
+                                  file_type,
+                                  @locale_creator,
+                                  :add_default => config.add_default,
                                   :override_i18n_method => config.override_i18n_method)
     transformed_text = pm.run(text) do |old_line, new_line|
       @printer.print_diff(old_line, new_line)
@@ -92,6 +97,7 @@ class I15R
     path = "app" if path.nil?
     files = File.directory?(path) ? Dir.glob("#{path}/**/*.{erb,haml}") : [path]
     files.each { |file| internationalize_file(file) }
+    @locale_creator.save_file
   end
 
   def include_path?

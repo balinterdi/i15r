@@ -26,11 +26,15 @@ class I15R
       ]
     }
 
-    def initialize(prefix, file_type, options={})
+    def initialize(prefix, file_type, locale_creator = I15R::LocaleCreator.new, options={})
+      if locale_creator.is_a? Hash
+        options = locale_creator
+        locale_creator = I15R::LocaleCreator.new
+      end
       @prefix = prefix
       @file_type = file_type
       transformer_class = self.class.const_get("#{file_type.to_s.capitalize}Transformer")
-      @transformer = transformer_class.new(options[:add_default], options[:override_i18n_method] || 'I18n.t')
+      @transformer = transformer_class.new(options[:add_default], options[:override_i18n_method] || 'I18n.t', locale_creator)
     end
 
     def translation_key(text)
@@ -66,13 +70,16 @@ class I15R
     end
 
     class Transformer
-      def initialize(add_default, i18n_method)
+      def initialize(add_default, i18n_method, locale_creator)
         @add_default = add_default
         @i18n_method = i18n_method
+        @locale_creator = locale_creator
       end
 
       private
         def i18n_string(key, original)
+          @locale_creator.add(key, original)
+
           if @add_default
             if original.to_s[0] == ':'
               original = original.to_s[1..-1]
