@@ -118,7 +118,7 @@ describe I15R do
       end
       specify do
         I15R::PatternMatcher.should_receive(:new)
-                            .with(anything, anything, hash_including(:add_default => true))
+                            .with(anything, anything, anything, hash_including(:add_default => true))
                             .and_return(patter_matcher)
         subject.internationalize_file(path)
       end
@@ -130,7 +130,7 @@ describe I15R do
       end
       specify do
         I15R::PatternMatcher.should_receive(:new)
-                            .with(anything, anything, hash_including(:add_default => false))
+                            .with(anything, anything, anything, hash_including(:add_default => false))
                             .and_return(patter_matcher)
         subject.internationalize_file(path)
       end
